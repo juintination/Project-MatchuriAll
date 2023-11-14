@@ -38,6 +38,27 @@
         echo "<p><strong>Phone Number:</strong> " . $adminRow['admin_phone'] . "</p>";
         echo "<p><strong>Email:</strong> " . $adminRow['admin_email'] . "</p>";
 
+        // 관리자의 프로필 정보를 데이터베이스에서 가져오는 쿼리
+        $profile_id = $adminRow['profile_id'];
+        if (isset($profile_id)) {
+            $sql = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+            $result = $conn->query($sql);
+        
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+        
+                // 사용자의 프로필 정보를 출력
+                echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
+                echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
+                echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
+                
+            } else {
+                echo "Profile not found.";
+            }
+        } else {
+            echo "Profile ID is not set.";
+        }
+
         // 가게 정보를 출력
         echo "<p><strong>Store Name:</strong> " . $adminRow['store_name'] . "</p>";
         echo "<p><strong>Classification:</strong> " . $adminRow['classification'] . "</p>";

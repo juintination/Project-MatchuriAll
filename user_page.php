@@ -34,15 +34,33 @@
         echo "<p><strong>Gender:</strong> " . $row['user_sex'] . "</p>";
         echo "<p><strong>Phone Number:</strong> " . $row['user_phone'] . "</p>";
         
-        // 사용자에 대한 추가 정보 및 기능을 이어서 추가할 수 있습니다.
+        // 사용자의 프로필 정보를 데이터베이스에서 가져오는 쿼리
+        $profile_id = $row['profile_id'];
+        if (isset($profile_id)) {
+            $sql = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+            $result = $conn->query($sql);
+        
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+        
+                // 사용자의 프로필 정보를 출력
+                echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
+                echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
+                echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
+                
+            } else {
+                echo "Profile not found.";
+            }
+        } else {
+            echo "Profile ID is not set.";
+        }
+
     } else {
         echo "User not found.";
     }
 
     $conn->close();
     ?>
-
-    <!-- 여기에서 사용자에 대한 다양한 정보 및 기능을 추가할 수 있습니다. -->
     <h1>처음으로 돌아가기</h1>
     <form action="index.php">
         <input type="submit" value="돌아가기">
