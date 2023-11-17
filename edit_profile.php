@@ -106,10 +106,9 @@
                             }
 
                             // 파일을 서버로 이동
-                            move_uploaded_file($file_tmp, "uploads/$file_name");
+                            $new_profile_pic = "uploads/profile_pic_$profile_id." . pathinfo($file_name, PATHINFO_EXTENSION);
+                            move_uploaded_file($file_tmp, $new_profile_pic);
 
-                            // 업로드된 파일 이름을 변수에 저장
-                            $new_profile_pic = "uploads/$file_name";
                         } else {
                             // 파일이 업로드되지 않은 경우 또는 오류가 발생한 경우
                             $new_profile_pic = null;
