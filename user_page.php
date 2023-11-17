@@ -2,6 +2,15 @@
 <html>
 <head>
     <title>User Page</title>
+    <style>
+        /* 프로필 사진 이미지 스타일 */
+        img.profile_pic_style {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the User Page</h1>
@@ -47,10 +56,17 @@
                 // 사용자의 프로필 정보를 출력
                 echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
                 echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
+
+                // 프로필 사진을 출력
+                if (!empty($row['profile_pic'])) {
+                    echo "<img src='" . $row['profile_pic'] . "' alt='Profile Picture' class='profile_pic_style'>";
+                } else {
+                    echo "<p>No profile picture available.</p>";
+                }
+
                 echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
 
                 // 프로필 수정 버튼 추가
-                // echo "<a href='edit_profile.php?profile_id=$profile_id'>프로필 수정</a>";
                 echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id&user_id=$user_id'>프로필 수정</a>";
                 
             } else {

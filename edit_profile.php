@@ -2,6 +2,15 @@
 <html>
 <head>
     <title>Edit Profile</title>
+    <style>
+        /* 프로필 사진 이미지 스타일 */
+        img.profile_pic_style {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
     <script>
         function checkFileSize() {
             var input = document.getElementById('profile_pic');
@@ -46,6 +55,11 @@
                 // 사용자의 현재 프로필 정보를 출력
                 echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
                 echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
+                if (!empty($row['profile_pic'])) {
+                    echo "<img src='" . $row['profile_pic'] . "' alt='Profile Picture' class='profile_pic_style'>";
+                } else {
+                    echo "<p>No profile picture available.</p>";
+                }
                 echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
 
                 // 프로필 정보 수정
