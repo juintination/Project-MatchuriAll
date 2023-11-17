@@ -21,21 +21,32 @@ $userPhone = $_POST['userPhone'];
 $userEmail = $_POST['userEmail'];
 $userPw = $_POST['userPw'];
 
-// 새로운 PROFILE 생성
-$sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 0);";
-if ($conn->query($sql) === TRUE) {
-    $profileId = $conn->insert_id;
-    echo "프로필 생성이 성공적으로 완료되었습니다.";
-} else {
-    echo "프로필 생성 오류: " . $conn->error;
-}
+// 이메일 중복 확인
+$emailCheckQuery = "SELECT user_id FROM USER WHERE user_email = '$userEmail'";
+$emailCheckResult = $conn->query($emailCheckQuery);
 
-// INSERT 쿼리 실행
-$sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_pw, user_email, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userPw', '$userEmail', '$storeID', '$profileId')";
-if ($conn->query($sql) === TRUE) {
-    echo "회원가입이 성공적으로 완료되었습니다.";
+if ($emailCheckResult->num_rows > 0) {
+    // 중복된 이메일이 존재하는 경우
+    echo "<script>alert('이미 등록된 이메일 주소입니다. 다른 이메일 주소를 사용해주세요.'); window.history.back();</script>";
 } else {
-    echo "회원가입 오류: " . $conn->error;
+    // 중복된 이메일이 없는 경우
+
+    // 새로운 PROFILE 생성
+    $sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 0);";
+    if ($conn->query($sql) === TRUE) {
+        $profileId = $conn->insert_id;
+        echo "프로필 생성이 성공적으로 완료되었습니다.";
+    } else {
+        echo "프로필 생성 오류: " . $conn->error;
+    }
+
+    // INSERT 쿼리 실행
+    $sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_pw, user_email, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userPw', '$userEmail', '$storeID', '$profileId')";
+    if ($conn->query($sql) === TRUE) {
+        echo "회원가입이 성공적으로 완료되었습니다.";
+    } else {
+        echo "회원가입 오류: " . $conn->error;
+    }
 }
 
 $conn->close();

@@ -19,34 +19,45 @@ $adminPhone = $_POST['adminPhone'];
 $adminEmail = $_POST['adminEmail'];
 $adminPw = $_POST['adminPw'];
 
-// 새로운 PROFILE 생성
-$sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 1);";
-if ($conn->query($sql) === TRUE) {
-    $profileId = $conn->insert_id;
-    echo "프로필 생성이 성공적으로 완료되었습니다.";
+// 이메일 중복 확인
+$emailCheckQuery = "SELECT admin_id FROM ADMIN WHERE admin_email = '$adminEmail'";
+$emailCheckResult = $conn->query($emailCheckQuery);
+
+if ($emailCheckResult->num_rows > 0) {
+    // 중복된 이메일이 존재하는 경우
+    echo "<script>alert('이미 등록된 이메일 주소입니다. 다른 이메일 주소를 사용해주세요.'); window.history.back();</script>";
 } else {
-    echo "프로필 생성 오류: " . $conn->error;
-}
+    // 중복된 이메일이 없는 경우
 
-// INSERT 쿼리 실행 (관리자 정보)
-$sql = "INSERT INTO ADMIN (admin_name, admin_birth, admin_phone, admin_email, admin_pw, profile_id) VALUES ('$adminName', '$adminBirth', '$adminPhone', '$adminEmail', '$adminPw', '$profileId')";
-if ($conn->query($sql) === TRUE) {
-    $admin_id = $conn->insert_id; // 새로 생성된 관리자의 ID 가져오기
-
-    // POST 데이터 가져오기 (가게 정보)
-    $storeName = $_POST['storeName'];
-    $storeInfo = $_POST['storeInfo'];
-    $classification = $_POST['classification'];
-
-    // INSERT 쿼리 실행 (가게 정보)
-    $sql = "INSERT INTO STORE (store_name, store_info, classification, admin_id) VALUES ('$storeName', '$storeInfo', '$classification', '$admin_id')";
+    // 새로운 PROFILE 생성
+    $sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 1);";
     if ($conn->query($sql) === TRUE) {
-        echo "관리자와 가게 정보가 성공적으로 등록되었습니다.";
+        $profileId = $conn->insert_id;
+        echo "프로필 생성이 성공적으로 완료되었습니다.";
     } else {
-        echo "가게 정보 등록 오류: " . $conn->error;
+        echo "프로필 생성 오류: " . $conn->error;
     }
-} else {
-    echo "관리자 정보 등록 오류: " . $conn->error;
+
+    // INSERT 쿼리 실행 (관리자 정보)
+    $sql = "INSERT INTO ADMIN (admin_name, admin_birth, admin_phone, admin_email, admin_pw, profile_id) VALUES ('$adminName', '$adminBirth', '$adminPhone', '$adminEmail', '$adminPw', '$profileId')";
+    if ($conn->query($sql) === TRUE) {
+        $admin_id = $conn->insert_id; // 새로 생성된 관리자의 ID 가져오기
+
+        // POST 데이터 가져오기 (가게 정보)
+        $storeName = $_POST['storeName'];
+        $storeInfo = $_POST['storeInfo'];
+        $classification = $_POST['classification'];
+
+        // INSERT 쿼리 실행 (가게 정보)
+        $sql = "INSERT INTO STORE (store_name, store_info, classification, admin_id) VALUES ('$storeName', '$storeInfo', '$classification', '$admin_id')";
+        if ($conn->query($sql) === TRUE) {
+            echo "관리자와 가게 정보가 성공적으로 등록되었습니다.";
+        } else {
+            echo "가게 정보 등록 오류: " . $conn->error;
+        }
+    } else {
+        echo "관리자 정보 등록 오류: " . $conn->error;
+    }
 }
 
 $conn->close();
