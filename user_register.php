@@ -22,7 +22,7 @@ $userEmail = $_POST['userEmail'];
 $userPw = $_POST['userPw'];
 
 // 새로운 PROFILE 생성
-$sql = "INSERT INTO PROFILE (profile_pic, profile_info) VALUES (null, null);";
+$sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 0);";
 if ($conn->query($sql) === TRUE) {
     $profileId = $conn->insert_id;
     echo "프로필 생성이 성공적으로 완료되었습니다.";

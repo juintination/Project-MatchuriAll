@@ -22,6 +22,7 @@
 
     // 사용자 정보를 데이터베이스에서 가져오는 쿼리
     $user_id = $_GET['user_id'];
+    $store_id = $_GET['store_id'];
     $sql = "SELECT * FROM USER WHERE user_id = $user_id";
     $result = $conn->query($sql);
 
@@ -47,6 +48,10 @@
                 echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
                 echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
                 echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
+
+                // 프로필 수정 버튼 추가
+                // echo "<a href='edit_profile.php?profile_id=$profile_id'>프로필 수정</a>";
+                echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id&user_id=$user_id'>프로필 수정</a>";
                 
             } else {
                 echo "Profile not found.";

@@ -27,8 +27,9 @@ $conn->select_db($database);
 // PROFILE 테이블 생성
 $profileQuery = "CREATE TABLE IF NOT EXISTS PROFILE (
     profile_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    profile_pic BLOB NULL,
-    profile_info VARCHAR(255) NULL
+    profile_pic MEDIUMBLOB NULL,
+    profile_info VARCHAR(255) NULL,
+    is_admin TINYINT(1)
 )";
 
 if ($conn->query($profileQuery) === TRUE) {

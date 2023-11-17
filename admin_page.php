@@ -51,6 +51,12 @@
                 echo "<p><strong>Profile ID:</strong> " . $row['profile_id'] . "</p>";
                 echo "<p><strong>Profile Picture:</strong> " . $row['profile_pic'] . "</p>";
                 echo "<p><strong>Profile Info:</strong> " . $row['profile_info'] . "</p>";
+
+
+                // 프로필 수정 버튼 추가
+                // echo "<a href='edit_profile.php?profile_id=$profile_id'>프로필 수정</a>";
+                echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id'>프로필 수정</a>";
+                
                 
             } else {
                 echo "Profile not found.";
@@ -62,8 +68,6 @@
         // 가게 정보를 출력
         echo "<p><strong>Store Name:</strong> " . $adminRow['store_name'] . "</p>";
         echo "<p><strong>Classification:</strong> " . $adminRow['classification'] . "</p>";
-
-        // 관리자와 가게에 대한 추가 정보 및 기능을 이어서 추가할 수 있습니다.
     } else {
         echo "Admin not found.";
     }
