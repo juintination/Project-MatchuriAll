@@ -175,7 +175,8 @@
                             }
                         } else if (xhr.status === 400) {
                             // 재고가 부족한 경우의 처리
-                            alert('상품 ' + productId + '의 재고가 부족합니다.');
+                            var productName = cart[i].name; // 해당 상품의 이름 가져오기
+                            alert("'" + productName + "'" + '의 재고를 확인해주세요.');
                             insufficientStock = true;
                         } else {
                             console.error('상품 재고 조회 실패');
@@ -206,11 +207,52 @@
                 xhrUpdate.send();
             }
 
+            // JSON 형식으로 전송할 데이터 생성
+            var orderDetailData = [];
+            var totalReceiptPrice = 0;
+
+            for (var i = 0; i < cart.length; i++) {
+                var productData = {
+                    product_id: cart[i].id,
+                    product_count: cart[i].quantity,
+                    intermediate_price: cart[i].price * cart[i].quantity,
+                };
+
+                orderDetailData.push(productData);
+                totalReceiptPrice += cart[i].price * cart[i].quantity;
+            }
+
+            // RECEIPT 테이블에 데이터 전송
+            var xhrReceiptNum = new XMLHttpRequest();
+            xhrReceiptNum.open('GET', 'get_receipt_count.php', false);
+            xhrReceiptNum.send();
+            var receiptCount = parseInt(xhrReceiptNum.responseText) + 1;
+
+            var receiptData = {
+                receipt_price: totalReceiptPrice,
+                receipt_num: receiptCount,
+                payment_method: 'Unknown',  // 예시로 'Credit Card' 사용, 실제로 사용하는 값으로 변경
+                store_id: <?php echo $store_id; ?>,
+                user_id: <?php echo $user_id; ?>,
+            };
+
+            // RECEIPT 테이블에 데이터 전송
+            var xhrReceipt = new XMLHttpRequest();
+            xhrReceipt.open('POST', 'update_receipt.php', false);
+            xhrReceipt.setRequestHeader('Content-Type', 'application/json');
+            xhrReceipt.send(JSON.stringify(receiptData));
+
+            // ORDER_DETAIL 테이블에 데이터 전송
+            var xhrOrderDetail = new XMLHttpRequest();
+            xhrOrderDetail.open('POST', 'update_order_detail.php', false);
+            xhrOrderDetail.setRequestHeader('Content-Type', 'application/json');
+            xhrOrderDetail.send(JSON.stringify({ receipt_id: xhrReceipt.responseText, products: orderDetailData }));
+
             // 결제 후 장바구니 비우기
             cart = [];
             updateCart();
 
-            // 페이지 새로고침
+            // 페이지 새로고침 (혹은 다른 방법으로 사용자에게 알림)
             location.reload();
             alert('결제가 완료되었습니다.');
         }
