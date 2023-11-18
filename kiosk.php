@@ -227,7 +227,6 @@
                 totalReceiptPrice += cart[i].price * cart[i].quantity;
             }
 
-            // RECEIPT 테이블에 데이터 전송
             var xhrReceiptNum = new XMLHttpRequest();
             xhrReceiptNum.open('GET', 'get_receipt_count.php', false);
             xhrReceiptNum.send();
@@ -236,7 +235,7 @@
             var receiptData = {
                 receipt_price: totalReceiptPrice,
                 receipt_num: receiptCount,
-                payment_method: 'Unknown',  // 예시로 'Credit Card' 사용, 실제로 사용하는 값으로 변경
+                payment_method: 'Credit Card',
                 store_id: <?php echo $store_id; ?>,
                 user_id: <?php echo $user_id; ?>,
             };
