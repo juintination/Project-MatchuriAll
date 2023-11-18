@@ -192,6 +192,11 @@
                 if (insufficientStock) {
                     return;
                 }
+            }
+
+            for (var i = 0; i < cart.length; i++) {
+                var productId = cart[i].id;
+                var quantity = cart[i].quantity;
 
                 // 상품의 재고를 감소시키는 쿼리 실행
                 var xhrUpdate = new XMLHttpRequest();
