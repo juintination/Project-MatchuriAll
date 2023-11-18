@@ -41,7 +41,7 @@ if ($emailCheckResult->num_rows > 0) {
     }
 
     // INSERT 쿼리 실행
-    $sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_pw, user_email, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userPw', '$userEmail', '$storeID', '$profileId')";
+    $sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_email, user_pw, user_point, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userEmail', '$userPw', 0, '$storeID', '$profileId')";
     if ($conn->query($sql) === TRUE) {
         echo "회원가입이 성공적으로 완료되었습니다.";
     } else {
