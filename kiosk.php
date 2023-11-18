@@ -158,6 +158,7 @@
         function checkout() {
             // 장바구니에 담긴 각 상품의 개수가 현재 재고보다 많은지 확인
             var insufficientStock = false;
+
             for (var i = 0; i < cart.length; i++) {
                 var productId = cart[i].id;
                 var quantity = cart[i].quantity;
@@ -171,65 +172,47 @@
                             if (response !== "") {
                                 alert(response);
                                 insufficientStock = true;
-                                return;
                             }
                         } else if (xhr.status === 400) {
                             // 재고가 부족한 경우의 처리
                             alert('상품 ' + productId + '의 재고가 부족합니다.');
                             insufficientStock = true;
-                            return;
                         } else {
                             console.error('상품 재고 조회 실패');
                             insufficientStock = true;
-                            return;
                         }
                     }
                 };
 
                 xhr.open('GET', 'check_product_stock.php?product_id=' + productId + '&quantity=' + quantity, false);
                 xhr.send();
-            }
 
-            // 재고 부족한 상품이 있다면 결제를 중단
-            if (insufficientStock) {
-                return;
-            }
+                // 재고 부족한 상품이 있다면 결제를 중단
+                if (insufficientStock) {
+                    return;
+                }
 
-            // 결제 처리
-            for (var i = 0; i < cart.length; i++) {
                 // 상품의 재고를 감소시키는 쿼리 실행
-                var productId = cart[i].id;
-                var quantity = cart[i].quantity;
-
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            // 상품 결제 성공
-                            var response = xhr.responseText;
-                            if (response !== "") {
-                                alert(response);
-                            }
-
-                            // 결제 후 장바구니 비우기
-                            cart = [];
-                            updateCart();
-
-                            // 페이지 새로고침
-                            location.reload();
-                            alert('결제가 완료되었습니다.');
-                        } else if (xhr.status === 400) {
-                            // 재고가 부족한 경우의 처리
-                            alert('상품 ' + productId + '의 재고가 부족합니다.');
-                        } else {
+                var xhrUpdate = new XMLHttpRequest();
+                xhrUpdate.onreadystatechange = function () {
+                    if (xhrUpdate.readyState === XMLHttpRequest.DONE) {
+                        if (xhrUpdate.status !== 200) {
                             console.error('상품 결제 실패');
                         }
                     }
                 };
 
-                xhr.open('GET', 'update_product_stock.php?product_id=' + productId + '&quantity=' + quantity, false);
-                xhr.send();
+                xhrUpdate.open('GET', 'update_product_stock.php?product_id=' + productId + '&quantity=' + quantity, false);
+                xhrUpdate.send();
             }
+
+            // 결제 후 장바구니 비우기
+            cart = [];
+            updateCart();
+
+            // 페이지 새로고침
+            location.reload();
+            alert('결제가 완료되었습니다.');
         }
     </script>
 </body>
