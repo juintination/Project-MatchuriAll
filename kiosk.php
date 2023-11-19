@@ -156,6 +156,12 @@
         }
 
         function checkout() {
+            // 장바구니에 상품이 담겨있는지 확인
+            if (cart.length === 0) {
+                alert('장바구니가 비어있습니다. 상품을 담아주세요.');
+                return;
+            }
+            
             // 장바구니에 담긴 각 상품의 개수가 현재 재고보다 많은지 확인
             var insufficientStock = false;
 
