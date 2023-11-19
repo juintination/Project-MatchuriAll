@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 현재 시간을 포함한 timestamp 생성
+    date_default_timezone_set('Asia/Seoul');
     $currentTime = date('Y-m-d H:i:s');
 
     // RECEIPT 테이블에 데이터 삽입
