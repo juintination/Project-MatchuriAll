@@ -1,9 +1,9 @@
 <?php
 // 데이터베이스 연결 설정
 $servername = "localhost";
-$username = "root"; // 실제 데이터베이스 사용자 이름
-$password = "admin"; // 실제 데이터베이스 암호
-$database = "demoDB"; // 실제 데이터베이스 이름
+$username = "root";
+$password = "admin";
+$database = "demoDB";
 
 // 데이터베이스 연결
 $conn = new mysqli($servername, $username, $password, $database);
@@ -13,11 +13,17 @@ if ($conn->connect_error) {
 }
 
 // POST 데이터 가져오기 (관리자 정보)
-$adminName = $_POST['adminName'];
-$adminBirth = $_POST['adminBirth'];
-$adminPhone = $_POST['adminPhone'];
-$adminEmail = $_POST['adminEmail'];
-$adminPw = $_POST['adminPw'];
+$adminName = isset($_POST['adminName']) ? $_POST['adminName'] : null;
+$adminBirth = isset($_POST['adminBirth']) ? $_POST['adminBirth'] : null;
+$adminPhone = isset($_POST['adminPhone']) ? $_POST['adminPhone'] : null;
+$adminEmail = isset($_POST['adminEmail']) ? $_POST['adminEmail'] : null;
+$adminPw = isset($_POST['adminPw']) ? $_POST['adminPw'] : null;
+
+// 필수 값이 하나라도 누락된 경우 처리
+if ($adminName === null || $adminBirth === null || $adminPhone === null || $adminEmail === null || $adminPw === null) {
+    echo "<script>alert('필수 정보를 모두 입력해주세요.'); window.history.back();</script>";
+    exit; // 필수 정보 누락 시 스크립트 실행 후 종료
+}
 
 // 이메일 중복 확인
 $emailCheckQuery = "SELECT admin_id FROM ADMIN WHERE admin_email = '$adminEmail'";
@@ -44,14 +50,20 @@ if ($emailCheckResult->num_rows > 0) {
         $admin_id = $conn->insert_id; // 새로 생성된 관리자의 ID 가져오기
 
         // POST 데이터 가져오기 (가게 정보)
-        $storeName = $_POST['storeName'];
-        $storeInfo = $_POST['storeInfo'];
-        $classification = $_POST['classification'];
+        $storeName = isset($_POST['storeName']) ? $_POST['storeName'] : null;
+        $storeInfo = isset($_POST['storeInfo']) ? $_POST['storeInfo'] : null;
+        $classification = isset($_POST['classification']) ? $_POST['classification'] : null;
+
+        // 필수 값이 하나라도 누락된 경우 처리
+        if ($storeName === null || $storeInfo === null || $classification === null) {
+            echo "<script>alert('필수 정보를 모두 입력해주세요.'); window.history.back();</script>";
+            exit; // 필수 정보 누락 시 스크립트 실행 후 종료
+        }
 
         // INSERT 쿼리 실행 (가게 정보)
         $sql = "INSERT INTO STORE (store_name, store_info, classification, admin_id) VALUES ('$storeName', '$storeInfo', '$classification', '$admin_id')";
         if ($conn->query($sql) === TRUE) {
-            echo "관리자와 가게 정보가 성공적으로 등록되었습니다.";
+            echo "<script>alert('관리자와 가게 정보가 성공적으로 등록되었습니다.'); window.location = 'index.php';</script>";
         } else {
             echo "가게 정보 등록 오류: " . $conn->error;
         }
@@ -62,17 +74,3 @@ if ($emailCheckResult->num_rows > 0) {
 
 $conn->close();
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>관리자 및 가게 정보 등록 완료</title>
-</head>
-<body>
-    <h1>관리자 및 가게 정보 등록 완료</h1>
-    <p>관리자와 가게 정보가 성공적으로 등록되었습니다.</p>
-    <form action="index.php">
-        <input type="submit" value="돌아가기">
-    </form>
-</body>
-</html>
