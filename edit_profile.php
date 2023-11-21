@@ -24,6 +24,15 @@
                 input.value = '';
             }
         }
+
+        function confirmDelete() {
+            var result = confirm("정말로 회원을 탈퇴하시겠습니까?");
+            if (result) {
+                document.getElementById("deleteForm").submit(); // 확인을 선택한 경우
+            } else {
+                // 취소를 선택한 경우(아무 동작 없음)
+            }
+        }
     </script>
 </head>
 <body>
@@ -75,10 +84,20 @@
                 echo "<textarea name='profile_info' id='profile_info'>" . $row['profile_info'] . "</textarea><br>";
 
                 // 기본 이미지로 변경 버튼
-                echo "<input type='submit' name='default_pic' value='기본 이미지로 변경'><br>";
+                echo "<input type='submit' name='default_pic' value='기본 이미지로 변경'>";
 
                 // 수정 완료 버튼
                 echo "<input type='submit' name='submit' value='프로필 수정 완료'>";
+
+                // 회원 탈퇴 버튼
+                echo "<button type='button' onclick='confirmDelete()'>회원 탈퇴</button>";
+                
+                echo "</form>";
+
+                // 삭제를 위한 별도의 폼
+                echo "<form id='deleteForm' action='' method='post'>";
+                echo "<input type='hidden' name='profile_id' value='$profile_id'>";
+                echo "<input type='hidden' name='delete_user'>";
                 echo "</form>";
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -124,6 +143,41 @@
 
                         echo "<script>alert('프로필 정보가 성공적으로 업데이트되었습니다.'); location.reload();</script>";
 
+                    } else if (isset($_POST['delete_user'])) {
+                        // 회원 탈퇴 버튼이 눌렸을 때
+                        $user_id_query = "SELECT user_id FROM USER WHERE profile_id = $profile_id";
+                        $user_id_result = $conn->query($user_id_query);
+
+                        if ($user_id_result->num_rows > 0) {
+                            $row = $user_id_result->fetch_assoc();
+                            $user_id = $row['user_id'];
+
+                            // USER 테이블에서 삭제
+                            $delete_user_query = "DELETE FROM USER WHERE user_id = $user_id";
+                            $conn->query($delete_user_query);
+
+                            // 프로필 사진 파일 삭제
+                            $profile_pic_query = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+                            $profile_pic_result = $conn->query($profile_pic_query);
+
+                            if ($profile_pic_result->num_rows > 0) {
+                                $row = $profile_pic_result->fetch_assoc();
+                                $profile_pic_path = $row['profile_pic'];
+                                if ($profile_pic_path !== null && file_exists($profile_pic_path)) {
+                                    unlink($profile_pic_path);
+                                } else {
+                                    // echo "<script>alert('" . addslashes(error_get_last()['message']) . "');</script>";
+                                }
+                            }
+
+                            // PROFILE 테이블에서 삭제
+                            $delete_profile_query = "DELETE FROM PROFILE WHERE profile_id = $profile_id";
+                            $conn->query($delete_profile_query);
+
+                            echo "<script>alert('회원 탈퇴가 성공적으로 완료되었습니다.'); window.location = 'index.php';</script>";
+                        } else {
+                            echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = 'index.php';</script>";
+                        }
                     }
                 }
             } else {
