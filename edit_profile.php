@@ -53,7 +53,46 @@
 
     if (isset($_GET['profile_id'])) {
         $profile_id = $_GET['profile_id'];
+        $store_id = $_GET['store_id'];
         $sql = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+
+        // 프로필 사진 파일 삭제
+        function deleteProfilePicture($profile_id, $conn) {
+            $profile_pic_query = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+            $profile_pic_result = $conn->query($profile_pic_query);
+
+            if ($profile_pic_result->num_rows > 0) {
+                $row = $profile_pic_result->fetch_assoc();
+                $profile_pic_path = $row['profile_pic'];
+                if ($profile_pic_path !== null && file_exists($profile_pic_path)) {
+                    unlink($profile_pic_path);
+                } else {
+                    // echo "<script>alert('" . addslashes(error_get_last()['message']) . "');</script>";
+                }
+            }
+        }
+
+        // 파일 업로드
+        function moveUploadedFile($profile_id, $file) {
+            // 파일 정보 가져오기
+            $file_name = $file['name'];
+            $file_tmp = $file['tmp_name'];
+        
+            // uploads 폴더가 없다면 생성
+            $uploadFolder = 'uploads';
+            if (!is_dir($uploadFolder)) {
+                mkdir($uploadFolder, 0777, true);
+            }
+        
+            // 파일을 서버로 이동
+            $new_profile_pic = "$uploadFolder/profile_pic_$profile_id." . pathinfo($file_name, PATHINFO_EXTENSION);
+            
+            if (move_uploaded_file($file_tmp, $new_profile_pic)) {
+                return $new_profile_pic;
+            } else {
+                return null;
+            }
+        }
 
         try {
             $result = $conn->query($sql);
@@ -73,7 +112,6 @@
 
                 // 프로필 정보 수정
                 echo "<form action='' method='post' enctype='multipart/form-data'>";
-                echo "<input type='hidden' name='profile_id' value='$profile_id'>";
 
                 // 프로필 사진 변경
                 echo "<label for='profile_pic'>프로필 사진 변경:</label>";
@@ -96,37 +134,28 @@
 
                 // 삭제를 위한 별도의 폼
                 echo "<form id='deleteForm' action='' method='post'>";
-                echo "<input type='hidden' name='profile_id' value='$profile_id'>";
                 echo "<input type='hidden' name='delete_user'>";
                 echo "</form>";
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (isset($_POST['default_pic'])) {
                         // 기본 이미지로 변경 버튼이 눌렸을 때
+                        deleteProfilePicture($profile_id, $conn);
+                        
                         $update_pic_query = "UPDATE PROFILE SET profile_pic = NULL WHERE profile_id = $profile_id";
                         $conn->query($update_pic_query);
 
-                        echo "<script>alert('프로필 사진이 기본 이미지로 변경되었습니다.'); location.reload();</script>";
+                        echo "<script>alert('프로필 사진이 기본 이미지로 변경되었습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
                     } else if (isset($_POST['submit'])) {
                         // 프로필 수정 완료 버튼이 눌렸을 때
                         $new_profile_info = $_POST['profile_info'];
 
                         // 프로필 사진 업로드
                         if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_ERR_OK) {
-                            
-                            // 파일 정보 가져오기
-                            $file_name = $_FILES['profile_pic']['name'];
-                            $file_tmp = $_FILES['profile_pic']['tmp_name'];
 
-                            // uploads 폴더가 없다면 생성
-                            $uploadFolder = 'uploads';
-                            if (!is_dir($uploadFolder)) {
-                                mkdir($uploadFolder, 0777, true);
-                            }
-
-                            // 파일을 서버로 이동
-                            $new_profile_pic = "uploads/profile_pic_$profile_id." . pathinfo($file_name, PATHINFO_EXTENSION);
-                            move_uploaded_file($file_tmp, $new_profile_pic);
+                            // 프로필 사진 파일 삭제 후 파일 업로드
+                            deleteProfilePicture($profile_id, $conn);
+                            $new_profile_pic = moveUploadedFile($profile_id, $_FILES['profile_pic']);
 
                         } else {
                             // 파일이 업로드되지 않은 경우 또는 오류가 발생한 경우
@@ -141,7 +170,7 @@
                         $update_query .= " WHERE profile_id = $profile_id";
                         $conn->query($update_query);
 
-                        echo "<script>alert('프로필 정보가 성공적으로 업데이트되었습니다.'); location.reload();</script>";
+                        echo "<script>alert('프로필 정보가 성공적으로 업데이트되었습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
 
                     } else if (isset($_POST['delete_user'])) {
                         // 회원 탈퇴 버튼이 눌렸을 때
@@ -157,18 +186,7 @@
                             $conn->query($delete_user_query);
 
                             // 프로필 사진 파일 삭제
-                            $profile_pic_query = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
-                            $profile_pic_result = $conn->query($profile_pic_query);
-
-                            if ($profile_pic_result->num_rows > 0) {
-                                $row = $profile_pic_result->fetch_assoc();
-                                $profile_pic_path = $row['profile_pic'];
-                                if ($profile_pic_path !== null && file_exists($profile_pic_path)) {
-                                    unlink($profile_pic_path);
-                                } else {
-                                    // echo "<script>alert('" . addslashes(error_get_last()['message']) . "');</script>";
-                                }
-                            }
+                            deleteProfilePicture($profile_id, $conn);
 
                             // PROFILE 테이블에서 삭제
                             $delete_profile_query = "DELETE FROM PROFILE WHERE profile_id = $profile_id";
@@ -195,10 +213,7 @@
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $is_admin = $row['is_admin'];
-        $store_id = $_GET['store_id'];
-
-        if ($is_admin == 0) {
+        if ($row['is_admin'] == 0) {
             $user_id = $_GET['user_id'];
             $redirect_link = "user_page.php?store_id=$store_id&user_id=$user_id";
         } else {
