@@ -36,20 +36,22 @@ if ($emailCheckResult->num_rows > 0) {
     echo "<script>alert('이미 등록된 이메일 주소입니다. 다른 이메일 주소를 사용해주세요.'); window.history.back();</script>";
 } else {
     // 새로운 PROFILE 생성
-    $sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (null, null, 0);";
+    $defaultProfilePic = 'uploads/profile_default.png';
+    $sql = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES ('$defaultProfilePic', null, 0);";
+    
     if ($conn->query($sql) === TRUE) {
         $profileId = $conn->insert_id;
-        echo "프로필 생성이 성공적으로 완료되었습니다.";
+
+        // INSERT 쿼리 실행
+        $sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_email, user_pw, user_point, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userEmail', '$userPw', 0, '$storeID', '$profileId')";
+        
+        if ($conn->query($sql) === TRUE) {
+            echo "<script>alert('회원가입이 성공적으로 완료되었습니다.'); window.location = 'index.php';</script>";
+        } else {
+            echo "회원가입 오류: " . $conn->error;
+        }
     } else {
         echo "프로필 생성 오류: " . $conn->error;
-    }
-
-    // INSERT 쿼리 실행
-    $sql = "INSERT INTO USER (user_name, user_birth, user_sex, user_phone, user_email, user_pw, user_point, store_id, profile_id) VALUES ('$userName', '$userBirth', '$userSex', '$userPhone', '$userEmail', '$userPw', 0, '$storeID', '$profileId')";
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('회원가입이 성공적으로 완료되었습니다.'); window.location = 'index.php';</script>";
-    } else {
-        echo "회원가입 오류: " . $conn->error;
     }
 }
 

@@ -64,7 +64,8 @@
             if ($profile_pic_result->num_rows > 0) {
                 $row = $profile_pic_result->fetch_assoc();
                 $profile_pic_path = $row['profile_pic'];
-                if ($profile_pic_path !== null && file_exists($profile_pic_path)) {
+                // 파일 이름이 uploads/profile_default.png가 아닌 경우에만 삭제
+                if ($profile_pic_path !== null && $profile_pic_path !== 'uploads/profile_default.png' && file_exists($profile_pic_path)) {
                     unlink($profile_pic_path);
                 } else {
                     // echo "<script>alert('" . addslashes(error_get_last()['message']) . "');</script>";
@@ -139,13 +140,19 @@
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (isset($_POST['default_pic'])) {
-                        // 기본 이미지로 변경 버튼이 눌렸을 때
-                        deleteProfilePicture($profile_id, $conn);
+                        // 기본 이미지 복사
+                        $default_profile_pic = 'uploads/profile_default.png';
+                        $new_profile_pic = "uploads/profile_pic_$profile_id.png";
                         
-                        $update_pic_query = "UPDATE PROFILE SET profile_pic = NULL WHERE profile_id = $profile_id";
-                        $conn->query($update_pic_query);
+                        if (copy($default_profile_pic, $new_profile_pic)) {
+                            // 프로필 사진 업데이트 쿼리
+                            $update_pic_query = "UPDATE PROFILE SET profile_pic = '$new_profile_pic' WHERE profile_id = $profile_id";
+                            $conn->query($update_pic_query);
+                            echo "<script>alert('프로필 사진이 기본 이미지로 변경되었습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
+                        } else {
+                            echo "<script>alert('프로필 사진을 기본 이미지로 변경하는 중에 오류가 발생했습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
+                        }
 
-                        echo "<script>alert('프로필 사진이 기본 이미지로 변경되었습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
                     } else if (isset($_POST['submit'])) {
                         // 프로필 수정 완료 버튼이 눌렸을 때
                         $new_profile_info = $_POST['profile_info'];
@@ -208,18 +215,30 @@
         echo "Profile ID is not set.";
     }
 
-    $is_admin_query = "SELECT is_admin FROM PROFILE WHERE profile_id = $profile_id";
+    $is_admin_query = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
     $result = $conn->query($is_admin_query);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if ($row['is_admin'] == 0) {
-            $user_id = $_GET['user_id'];
-            $redirect_link = "user_page.php?store_id=$store_id&user_id=$user_id";
+            // 사용자인 경우 user_id를 가져오기
+            $user_id_query = "SELECT user_id FROM USER WHERE profile_id = $profile_id";
+            $user_id_result = $conn->query($user_id_query);
+
+            if ($user_id_result->num_rows > 0) {
+                $user_row = $user_id_result->fetch_assoc();
+                $user_id = $user_row['user_id'];
+                $redirect_link = "user_page.php?store_id=$store_id&user_id=$user_id";
+            } else {
+                echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = 'index.php';</script>";
+                exit;
+            }
         } else {
+            // 관리자인 경우
             $redirect_link = "admin_page.php?store_id=$store_id";
         }
     } else {
+        // 프로필 정보를 찾을 수 없는 경우
         $redirect_link = "index.php";
     }
 
