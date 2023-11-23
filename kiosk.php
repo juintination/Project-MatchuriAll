@@ -42,18 +42,8 @@
     <h1>상품 목록</h1>
 
     <?php
-    // 데이터베이스 연결 설정
-    $servername = "localhost";
-    $username = "root";
-    $password = "admin";
-    $database = "demoDB";
-
-    // 데이터베이스 연결
-    $conn = new mysqli($servername, $username, $password, $database);
-
-    if ($conn->connect_error) {
-        die("데이터베이스 연결 실패: " . $conn->connect_error);
-    }
+    // DB 정보 불러오기
+    include 'db_info.php';
 
     // GET 파라미터로 전달된 store_id 확인
     if (isset($_GET['store_id']) && isset($_GET['user_id'])) {

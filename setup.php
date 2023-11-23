@@ -1,16 +1,6 @@
 <?php
-$servername = "localhost"; // MySQL 서버 호스트
-$username = "root"; // MySQL 사용자 이름
-$password = "admin"; // MySQL 비밀번호
-$database = "demoDB"; // 데이터베이스 이름
-
-// MySQL에 연결
-$conn = new mysqli($servername, $username, $password);
-
-// 연결 검사
-if ($conn->connect_error) {
-    die("MySQL 연결 실패: " . $conn->connect_error);
-}
+// DB 정보 불러오기
+include 'db_info.php';
 
 // 데이터베이스 생성
 $createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS $database";

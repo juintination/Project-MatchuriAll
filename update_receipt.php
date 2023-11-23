@@ -2,18 +2,8 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // 데이터베이스 연결 설정
-    $servername = "localhost";
-    $username = "root";
-    $password = "admin";
-    $database = "demoDB";
-
-    // 데이터베이스 연결
-    $conn = new mysqli($servername, $username, $password, $database);
-
-    if ($conn->connect_error) {
-        die("데이터베이스 연결 실패: " . $conn->connect_error);
-    }
+    // DB 정보 불러오기
+    include 'db_info.php';
 
     // 현재 시간을 포함한 timestamp 생성
     date_default_timezone_set('Asia/Seoul');

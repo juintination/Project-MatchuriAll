@@ -28,19 +28,9 @@
     <h1>Welcome to the Admin Page</h1>
 
     <?php
-    // 데이터베이스 연결 설정
-    $servername = "localhost";
-    $username = "root";
-    $password = "admin";
-    $database = "demoDB";
-
-    // 데이터베이스 연결
-    $conn = new mysqli($servername, $username, $password, $database);
-
-    if ($conn->connect_error) {
-        die("데이터베이스 연결 실패: " . $conn->connect_error);
-    }
-
+    // DB 정보 불러오기
+    include 'db_info.php';
+            
     // 관리자 정보를 데이터베이스에서 가져오는 쿼리
     $store_id = $_GET['store_id'];
     $sql = "SELECT ADMIN.*, STORE.store_name, STORE.classification

@@ -1,18 +1,8 @@
 <?php
+// DB 정보 불러오기
+include 'db_info.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 데이터베이스 연결 설정
-    $servername = "localhost";
-    $username = "root";
-    $password = "admin";
-    $database = "demoDB";
-
-    // 데이터베이스 연결
-    $conn = new mysqli($servername, $username, $password, $database);
-
-    if ($conn->connect_error) {
-        die("데이터베이스 연결 실패: " . $conn->connect_error);
-    }
-
     // POST 데이터 가져오기
     $productName = $_POST['productName'];
     $productVar = $_POST['productVar'];
@@ -28,8 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo '<script>alert("상품 추가 오류: ' . $conn->error . '"); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
     }
-
-    $conn->close();
 } else {
     echo '<script>alert("잘못된 요청입니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
 }
+
+$conn->close();
+?>

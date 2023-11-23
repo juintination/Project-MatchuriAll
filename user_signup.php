@@ -9,18 +9,8 @@
         <label for="storeID">가게 선택:</label>
         <select name="storeID" id="storeID">
             <?php
-            // 데이터베이스 연결 설정
-            $servername = "localhost";
-            $username = "root"; // 실제 데이터베이스 사용자 이름
-            $password = "admin"; // 실제 데이터베이스 암호
-            $database = "demoDB"; // 실제 데이터베이스 이름
-
-            // 데이터베이스 연결
-            $conn = new mysqli($servername, $username, $password, $database);
-
-            if ($conn->connect_error) {
-                die("데이터베이스 연결 실패: " . $conn->connect_error);
-            }
+            // DB 정보 불러오기
+            include 'db_info.php';
 
             // 가게 목록 불러오기
             $sql = "SELECT store_id, store_name FROM STORE";
