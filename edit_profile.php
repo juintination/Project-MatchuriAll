@@ -171,6 +171,16 @@
 
                     } else if (isset($_POST['delete_user'])) {
                         // 회원 탈퇴 버튼이 눌렸을 때
+                        $is_admin_query = "SELECT * FROM PROFILE WHERE profile_id = $profile_id";
+                        $result = $conn->query($is_admin_query);
+
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            if ($row['is_admin'] == 1) {
+                                echo "<script>alert('관리자에게 문의하시오.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
+                            }
+                        }
+
                         $user_id_query = "SELECT user_id FROM USER WHERE profile_id = $profile_id";
                         $user_id_result = $conn->query($user_id_query);
 
