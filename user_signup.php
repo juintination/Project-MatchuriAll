@@ -7,48 +7,48 @@
     <h1>일반 회원 회원가입</h1>
     <form action="user_register.php" method="post">
         <label for="storeID">가게 선택:</label>
-        <select name="storeID" id="storeID">
+        <select name="storeID" id="storeID" required>
             <?php
             // DB 정보 불러오기
             include 'db_info.php';
 
             // 가게 목록 불러오기
             $sql = "SELECT store_id, store_name FROM STORE";
-            $result = $conn->query($sql);
+            $result = oci_parse($conn, $sql);
+            oci_execute($result);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $storeID = $row["store_id"];
-                    $storeName = $row["store_name"];
-                    echo "<option value='$storeID'>$storeName</option>";
-                }
+            while ($row = oci_fetch_assoc($result)) {
+                $storeID = $row["STORE_ID"];
+                $storeName = $row["STORE_NAME"];
+                echo "<option value='$storeID'>$storeName</option>";
             }
 
-            $conn->close();
+            oci_free_statement($result);
+            oci_close($conn);
             ?>
         </select>
         <br>
-        <label for="userName">이름:</label>
-        <input type="text" name="userName" id="userName" required>
+        <label for="customerName">이름:</label>
+        <input type="text" name="customerName" id="customerName" required>
         <br>
-        <label for="userBirth">생년월일:</label>
-        <input type="date" name="userBirth" id="userBirth" required>
+        <label for="customerBirth">생년월일:</label>
+        <input type="date" name="customerBirth" id="customerBirth" required>
         <br>
-        <label for="userSex">성별:</label>
-        <select name="userSex" id="userSex" required>
+        <label for="customerSex">성별:</label>
+        <select name="customerSex" id="customerSex" required>
             <option value="남자">남자</option>
             <option value="여자">여자</option>
             <option value="기타">기타</option>
         </select>
         <br>
-        <label for="userPhone">핸드폰 번호:</label>
-        <input type="text" name="userPhone" id="userPhone" required>
+        <label for="customerPhone">핸드폰 번호:</label>
+        <input type="text" name="customerPhone" id="customerPhone" required>
         <br>
-        <label for="userEmail">이메일:</label>
-        <input type="text" name="userEmail" id="userEmail" required>
+        <label for="customerEmail">이메일:</label>
+        <input type="text" name="customerEmail" id="customerEmail" required>
         <br>
-        <label for="userPw">비밀번호:</label>
-        <input type="text" name="userPw" id="userPw" required>
+        <label for="customerPw">비밀번호:</label>
+        <input type="text" name="customerPw" id="customerPw" required>
         <br>
         <input type="submit" value="회원가입">
     </form>

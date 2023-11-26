@@ -10,11 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $currentTime = date('Y-m-d H:i:s');
 
     // RECEIPT 테이블에 데이터 삽입
-    $receiptQuery = "INSERT INTO RECEIPT (receipt_num, receipt_time, receipt_price, payment_method, store_id, user_id) 
-                     VALUES ('{$data['receipt_num']}', '$currentTime', '{$data['receipt_price']}', '{$data['payment_method']}', '{$data['store_id']}', '{$data['user_id']}')";
+    $receiptQuery = "INSERT INTO RECEIPT (RECEIPT_NUM, RECEIPT_TIME, RECEIPT_PRICE, PAYMENT_METHOD, STORE_ID, CUSTOMER_ID) 
+                     VALUES ('{$data['receipt_num']}', TO_DATE('$currentTime', 'YYYY-MM-DD HH24:MI:SS'), '{$data['receipt_price']}', '{$data['payment_method']}', '{$data['store_id']}', '{$data['customer_id']}')";
     
-    $conn->query($receiptQuery);
+    $stmt = oci_parse($conn, $receiptQuery);
+    oci_execute($stmt);
 
-    $conn->close();
+    oci_free_statement($stmt);
+    oci_close($conn);
 }
 ?>

@@ -14,15 +14,15 @@
 
             // STORE 테이블에서 가게 목록을 가져오기
             $sql = "SELECT store_id, store_name FROM STORE";
-            $result = $conn->query($sql);
+            $result = oci_parse($conn, $sql);
+            oci_execute($result);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<option value='" . $row['store_id'] . "'>" . $row['store_name'] . "</option>";
-                }
+            while ($row = oci_fetch_assoc($result)) {
+                echo "<option value='" . $row['STORE_ID'] . "'>" . $row['STORE_NAME'] . "</option>";
             }
 
-            $conn->close();
+            oci_free_statement($result);
+            oci_close($conn);
             ?>
         </select><br>
 
