@@ -135,9 +135,14 @@
     oci_close($conn);
     ?>
 
+    <h1>키오스크 들어가기</h1>
+    <form action="kiosk_login.php?store_id=<?php echo $store_id ?>">
+        <input type="submit" value="키오스크 들어가기">
+    </form>
+
     <h1>처음으로 돌아가기</h1>
     <form action="index.php">
-        <input type="submit" value="돌아가기">
+        <input type="submit" value="처음으로 돌아가기">
     </form>
 </body>
 </html>
