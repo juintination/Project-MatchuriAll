@@ -10,6 +10,30 @@
             object-fit: cover;
             border-radius: 50%;
         }
+
+        /* 테이블 스타일 */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* RECEIPT 아이템 스타일 */
+        .receipt-item {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +98,43 @@
         } else {
             echo "Profile ID is not set.";
         }
+
+        // 해당 고객의 구매 내역을 나열하는 쿼리
+        $sqlReceipt = "SELECT * FROM RECEIPT WHERE customer_id = :customer_id";
+        $stmtReceipt = oci_parse($conn, $sqlReceipt);
+        oci_bind_by_name($stmtReceipt, ':customer_id', $customer_id);
+        oci_execute($stmtReceipt);
+        
+        // 표 헤더 출력
+        echo "<h2>구매 내역</h2>";
+        echo "<table>";
+        echo "<tr>";
+        echo "<th>영수증 ID</th>";
+        echo "<th>가격(원)</th>";
+        echo "<th>결제 방법</th>";
+        echo "<th>구매 일자</th>";
+        echo "<th>상세 내역 보기</th>";
+        echo "</tr>";
+
+        while ($receiptRow = oci_fetch_assoc($stmtReceipt)) {
+            echo "<tr class='receipt-item'>";
+            echo "<td>" . $receiptRow['RECEIPT_ID'] . "</td>";
+            echo "<td>" . $receiptRow['RECEIPT_PRICE'] . "</td>";
+            echo "<td>" . $receiptRow['PAYMENT_METHOD'] . "</td>";
+            
+            // 날짜 포맷팅
+            $purchaseDate = date_create_from_format("d-M-y h.i.s A", $receiptRow['RECEIPT_TIME']);
+            echo "<td>" . $purchaseDate->format('d-M-y h.i.s A') . "</td>";
+
+            // 상세 내역 보기 링크
+            echo "<td><a class='order-detail-link' href='get_order_detail.php?receipt_id=" . $receiptRow['RECEIPT_ID'] . "'>자세히</a></td>";
+
+            echo "</tr>";
+        }
+
+        echo "</table>";
+
+        oci_free_statement($stmtReceipt);
 
     } else {
         echo "Customer not found.";
