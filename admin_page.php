@@ -136,7 +136,8 @@
     ?>
 
     <h1>키오스크 들어가기</h1>
-    <form action="kiosk_login.php?store_id=<?php echo $store_id ?>">
+    <form action="kiosk_login.php" method="get">
+        <input type="hidden" name="store_id" value="<?php echo $store_id; ?>">
         <input type="submit" value="키오스크 들어가기">
     </form>
 
