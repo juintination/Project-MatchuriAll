@@ -240,9 +240,9 @@
             cart = [];
             updateCart();
 
-            // 페이지 새로고침 (혹은 다른 방법으로 사용자에게 알림)
-            location.reload();
+            // 초기화면으로 이동
             alert('결제가 완료되었습니다.');
+            window.location.href = 'kiosk_login.php?store_id=<?php echo $store_id; ?>';
         }
     </script>
 </body>
