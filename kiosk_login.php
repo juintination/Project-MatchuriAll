@@ -6,10 +6,19 @@
     <title>Kiosk Login</title>
 </head>
 <body>
-    <h1>Kiosk Login</h1>
-
     <?php
     include 'db_info.php';
+
+    $store_id = $_GET['store_id'];
+    $store_name_query = "SELECT store_name FROM STORE WHERE store_id = :store_id";
+    $store_name_stmt = oci_parse($conn, $store_name_query);
+    oci_bind_by_name($store_name_stmt, ':store_id', $store_id);
+    oci_execute($store_name_stmt);
+    $store_name_row = oci_fetch_assoc($store_name_stmt);
+    $store_name = ($store_name_row) ? $store_name_row['STORE_NAME'] : 'Unknown Store';
+
+    // Welcome to [STORE_NAME]'s Kiosk!
+    echo "<h1>Welcome to $store_name's Kiosk!</h1>";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $customer_phone = $_POST['customer_phone'];
