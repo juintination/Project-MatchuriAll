@@ -54,12 +54,18 @@
                     $new_product_name = $_POST['product_name'];
                     $new_product_price = $_POST['product_price'];
                     $new_product_stock = $_POST['product_stock'];
-                    $update_query = "UPDATE PRODUCT SET PRODUCT_NAME = '$new_product_name', PRODUCT_PRICE = $new_product_price, PRODUCT_STOCK = $new_product_stock WHERE PRODUCT_ID = $product_id";
-                    $stmt = oci_parse($conn, $update_query);
-                    oci_execute($stmt);
 
-                    echo '<script>alert("상품 정보가 성공적으로 업데이트되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
+                    // Check if product stock is less than 0
+                    if ($new_product_stock < 0) {
+                        echo '<script>alert("상품 재고는 0보다 작을 수 없습니다.");</script>';
+                    } else {
+                        // Update the database
+                        $update_query = "UPDATE PRODUCT SET PRODUCT_NAME = '$new_product_name', PRODUCT_PRICE = $new_product_price, PRODUCT_STOCK = $new_product_stock WHERE PRODUCT_ID = $product_id";
+                        $stmt = oci_parse($conn, $update_query);
+                        oci_execute($stmt);
 
+                        echo '<script>alert("상품 정보가 성공적으로 업데이트되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
+                    }
                 } else if (isset($_POST['delete'])) {
                     // 상품 삭제 쿼리
                     $delete_query = "DELETE FROM PRODUCT WHERE PRODUCT_ID = $product_id";
@@ -67,7 +73,6 @@
                     oci_execute($stmt);
 
                     echo '<script>alert("상품이 성공적으로 삭제되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
-
                 }
             }
         } else {
