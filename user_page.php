@@ -61,6 +61,7 @@
         echo "<p><strong>Date of Birth:</strong> " . $customerRow['CUSTOMER_BIRTH'] . "</p>";
         echo "<p><strong>Gender:</strong> " . $customerRow['CUSTOMER_SEX'] . "</p>";
         echo "<p><strong>Phone Number:</strong> " . $customerRow['CUSTOMER_PHONE'] . "</p>";
+        echo "<p><strong>Point:</strong> " . $customerRow['CUSTOMER_POINT'] . "</p>";
 
         // 고객의 프로필 정보를 데이터베이스에서 가져오는 쿼리
         $profile_id = $customerRow['PROFILE_ID'];
