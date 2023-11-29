@@ -240,6 +240,29 @@
             cart = [];
             updateCart();
 
+            // 결제 완료 후 고객 포인트 업데이트
+            var xhrUpdatePoints = new XMLHttpRequest();
+            xhrUpdatePoints.onreadystatechange = function () {
+                if (xhrUpdatePoints.readyState === XMLHttpRequest.DONE) {
+                    if (xhrUpdatePoints.status === 200) {
+                        // 성공 처리, 예: 성공 메시지 표시
+                        console.log(xhrUpdatePoints.responseText);
+                    } else {
+                        // 오류 처리, 예: 오류 메시지 표시
+                        console.error('고객 포인트 업데이트 오류');
+                    }
+                }
+            };
+
+            xhrUpdatePoints.open('POST', 'update_customer_point.php', true);
+            xhrUpdatePoints.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            // customer_id와 totalReceiptPrice를 전송
+            var customer_id = <?php echo $customer_id; ?>;
+            var params = 'customer_id=' + customer_id + '&total_receipt_price=' + totalReceiptPrice;
+
+            xhrUpdatePoints.send(params);
+
             // 초기화면으로 이동
             alert('결제가 완료되었습니다.');
             window.location.href = 'kiosk_login.php?store_id=<?php echo $store_id; ?>';
