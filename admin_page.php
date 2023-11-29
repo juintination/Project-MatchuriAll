@@ -111,6 +111,78 @@
         oci_free_statement($stmtProduct);
         echo "</table>";
 
+        // 총 수익 계산
+        $sqlTotalRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TOTAL_REVENUE
+        FROM RECEIPT
+        WHERE RECEIPT.STORE_ID = :store_id";
+
+        $stmtTotalRevenue = oci_parse($conn, $sqlTotalRevenue);
+        oci_bind_by_name($stmtTotalRevenue, ':store_id', $store_id);
+        oci_execute($stmtTotalRevenue);
+
+        $totalRevenueRow = oci_fetch_assoc($stmtTotalRevenue);
+        $totalRevenue = $totalRevenueRow['TOTAL_REVENUE'];
+
+        oci_free_statement($stmtTotalRevenue);
+
+        // 오늘 하루 동안의 수익
+        $sqlTodayRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TODAY_REVENUE
+        FROM RECEIPT
+        WHERE RECEIPT.STORE_ID = :store_id
+        AND TRUNC(RECEIPT.RECEIPT_TIME) = TRUNC(SYSDATE)";
+
+        $stmtTodayRevenue = oci_parse($conn, $sqlTodayRevenue);
+        oci_bind_by_name($stmtTodayRevenue, ':store_id', $store_id);
+        oci_execute($stmtTodayRevenue);
+
+        $todayRevenueRow = oci_fetch_assoc($stmtTodayRevenue);
+        $todayRevenue = $todayRevenueRow['TODAY_REVENUE'];
+
+        oci_free_statement($stmtTodayRevenue);
+
+        // 최근 일주일 동안의 수익
+        $sqlLastWeekRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_WEEK_REVENUE
+        FROM RECEIPT
+        WHERE RECEIPT.STORE_ID = :store_id
+        AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE) - 7";
+
+        $stmtLastWeekRevenue = oci_parse($conn, $sqlLastWeekRevenue);
+        oci_bind_by_name($stmtLastWeekRevenue, ':store_id', $store_id);
+        oci_execute($stmtLastWeekRevenue);
+
+        $lastWeekRevenueRow = oci_fetch_assoc($stmtLastWeekRevenue);
+        $lastWeekRevenue = $lastWeekRevenueRow['LAST_WEEK_REVENUE'];
+
+        oci_free_statement($stmtLastWeekRevenue);
+
+        // 최근 한 달 동안의 수익
+        $sqlLastMonthRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_MONTH_REVENUE
+            FROM RECEIPT
+            WHERE RECEIPT.STORE_ID = :store_id
+            AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE, 'MM')";
+
+        $stmtLastMonthRevenue = oci_parse($conn, $sqlLastMonthRevenue);
+        oci_bind_by_name($stmtLastMonthRevenue, ':store_id', $store_id);
+        oci_execute($stmtLastMonthRevenue);
+
+        $lastMonthRevenueRow = oci_fetch_assoc($stmtLastMonthRevenue);
+        $lastMonthRevenue = $lastMonthRevenueRow['LAST_MONTH_REVENUE'];
+
+        oci_free_statement($stmtLastMonthRevenue);
+
+        // 수익 정보 표시
+        echo "<h2>Profit Information</h2>";
+        echo "<table>";
+        echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>최근 한 달 동안의 수익</th><th>자세히 보기</th></tr>";
+        echo "<tr>";
+        echo "<td>" . number_format($totalRevenue) . "원</td>";
+        echo "<td>" . number_format($todayRevenue) . "원</td>";
+        echo "<td>" . number_format($lastWeekRevenue) . "원</td>";
+        echo "<td>" . number_format($lastMonthRevenue) . "원</td>";
+        echo "<td><a href='get_profit.php?store_id=$store_id'>보러가기</a></td>";
+        echo "</tr>";
+        echo "</table>";
+
         // 상품 추가 버튼
         echo "<h2>Add Product</h2>";
         echo "<form action='add_product.php' method='post'>";
