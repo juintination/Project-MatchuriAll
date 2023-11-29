@@ -12,11 +12,12 @@ if ($user_type === "admin") {
     // 관리자로 로그인
     $sql = "SELECT ADMIN.*, STORE.store_name 
             FROM ADMIN
-            LEFT JOIN STORE ON ADMIN.store_id = STORE.store_id
-            WHERE ADMIN.admin_email = :email AND ADMIN.admin_pw = :password";
+            JOIN STORE ON ADMIN.admin_id = STORE.admin_id
+            WHERE ADMIN.admin_email = :email AND ADMIN.admin_pw = :password AND STORE.store_id = :store_id";
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ':email', $email);
     oci_bind_by_name($stmt, ':password', $password);
+    oci_bind_by_name($stmt, ':store_id', $store_id);
     oci_execute($stmt);
 
     $row = oci_fetch_assoc($stmt);
@@ -32,8 +33,7 @@ if ($user_type === "admin") {
 } else if ($user_type === "user") {
     // 일반 회원으로 로그인
     $sql = "SELECT CUSTOMER.*, STORE.store_name 
-            FROM CUSTOMER 
-            LEFT JOIN STORE ON CUSTOMER.store_id = STORE.store_id
+            FROM CUSTOMER, STORE
             WHERE CUSTOMER.customer_email = :email AND CUSTOMER.customer_pw = :password AND CUSTOMER.store_id = :store_id";
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ':email', $email);
@@ -46,7 +46,7 @@ if ($user_type === "admin") {
     if ($row) {
         // 일반 회원 정보가 일치하는 경우
         $store_id = $row['STORE_ID'];
-        $customer_id = $row['CUSTOMER_ID']; // Make sure to select the customer_id column
+        $customer_id = $row['CUSTOMER_ID'];
         header("Location: user_page.php?store_id=$store_id&customer_id=$customer_id");
     } else {
         // 일반 회원 정보가 일치하지 않는 경우
