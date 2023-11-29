@@ -18,26 +18,27 @@
 
         // 상품 정보를 데이터베이스에서 가져오는 쿼리
         $sql = "SELECT * FROM PRODUCT WHERE product_id = $product_id";
-        $result = $conn->query($sql);
+        $stmt = oci_parse($conn, $sql);
+        oci_execute($stmt);
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+        $row = oci_fetch_assoc($stmt);
 
+        if ($row) {
             // 상품 정보 수정 폼
             echo "<form action='' method='post'>";
             echo "<input type='hidden' name='product_id' value='$product_id'>";
 
             // 상품 이름 변경
             echo "<label for='product_name'>상품 이름:</label>";
-            echo "<input type='text' name='product_name' value='" . $row['product_name'] . "'><br>";
+            echo "<input type='text' name='product_name' value='" . $row['PRODUCT_NAME'] . "'><br>";
 
             // 상품 가격 변경
             echo "<label for='product_price'>상품 가격:</label>";
-            echo "<input type='number' name='product_price' value='" . $row['product_price'] . "'><br>";
+            echo "<input type='number' name='product_price' value='" . $row['PRODUCT_PRICE'] . "'><br>";
 
             // 상품 재고 변경
             echo "<label for='product_stock'>상품 재고:</label>";
-            echo "<input type='number' name='product_stock' value='" . $row['product_stock'] . "'><br>";
+            echo "<input type='number' name='product_stock' value='" . $row['PRODUCT_STOCK'] . "'><br>";
 
             // 수정 완료 버튼
             echo "<input type='submit' name='submit' value='상품 수정 완료'>";
@@ -53,28 +54,37 @@
                     $new_product_name = $_POST['product_name'];
                     $new_product_price = $_POST['product_price'];
                     $new_product_stock = $_POST['product_stock'];
-                    $update_query = "UPDATE PRODUCT SET product_name = '$new_product_name', product_price = $new_product_price, product_stock = $new_product_stock WHERE product_id = $product_id";
-                    $conn->query($update_query);
 
-                    echo '<script>alert("상품 정보가 성공적으로 업데이트되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
+                    // Check if product stock is less than 0
+                    if ($new_product_stock < 0) {
+                        echo '<script>alert("상품 재고는 0보다 작을 수 없습니다.");</script>';
+                    } else {
+                        // Update the database
+                        $update_query = "UPDATE PRODUCT SET PRODUCT_NAME = '$new_product_name', PRODUCT_PRICE = $new_product_price, PRODUCT_STOCK = $new_product_stock WHERE PRODUCT_ID = $product_id";
+                        $stmt = oci_parse($conn, $update_query);
+                        oci_execute($stmt);
 
+                        echo '<script>alert("상품 정보가 성공적으로 업데이트되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
+                    }
                 } else if (isset($_POST['delete'])) {
                     // 상품 삭제 쿼리
-                    $delete_query = "DELETE FROM PRODUCT WHERE product_id = $product_id";
-                    $conn->query($delete_query);
+                    $delete_query = "DELETE FROM PRODUCT WHERE PRODUCT_ID = $product_id";
+                    $stmt = oci_parse($conn, $delete_query);
+                    oci_execute($stmt);
 
                     echo '<script>alert("상품이 성공적으로 삭제되었습니다."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
-
                 }
             }
         } else {
             echo '<script>alert("Product not found."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
         }
+
+        oci_free_statement($stmt);
     } else {
         echo '<script>alert("Product ID is not set."); window.location.href = "admin_page.php?store_id=' . $store_id . '";</script>';
     }
 
-    $conn->close();
+    oci_close($conn);
     ?>
 
     <a href="admin_page.php?store_id=<?php echo $store_id; ?>">뒤로 가기</a>

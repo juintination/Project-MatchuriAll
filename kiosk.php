@@ -25,17 +25,6 @@
             width: 200px;
             float: left;
         }
-
-        /* 결제 버튼 스타일 */
-        #checkout-btn {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -46,33 +35,30 @@
     include 'db_info.php';
 
     // GET 파라미터로 전달된 store_id 확인
-    if (isset($_GET['store_id']) && isset($_GET['user_id'])) {
+    if (isset($_GET['store_id']) && isset($_GET['customer_id'])) {
         $store_id = $_GET['store_id'];
-        $user_id = $_GET['user_id'];
+        $customer_id = $_GET['customer_id'];
 
         // 상품 정보를 데이터베이스에서 가져오는 쿼리
         $sql = "SELECT * FROM PRODUCT WHERE store_id = $store_id";
-        $result = $conn->query($sql);
+        $stmt = oci_parse($conn, $sql);
+        oci_execute($stmt);
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                // 각 상품에 대한 정보를 나열
-                echo "<div class='product-card'>";
-                echo "<p><strong>상품명:</strong> " . $row['product_name'] . "</p>";
-                echo "<p><strong>가격:</strong> $" . $row['product_price'] . "</p>";
-                echo "<p><strong>재고:</strong> " . $row['product_stock'] . "</p>";
+        while ($row = oci_fetch_assoc($stmt)) {
+            // 각 상품에 대한 정보를 나열
+            echo "<div class='product-card'>";
+            echo "<p><strong>상품명:</strong> " . $row['PRODUCT_NAME'] . "</p>";
+            echo "<p><strong>가격:</strong> $" . $row['PRODUCT_PRICE'] . "</p>";
+            echo "<p><strong>재고:</strong> " . $row['PRODUCT_STOCK'] . "</p>";
 
-                // 수량 선택을 위한 입력 필드 추가
-                echo "<label for='quantity_$row[product_id]'>수량:</label>";
-                echo "<input type='number' id='quantity_$row[product_id]' name='quantity' min='1' value='1'>";
+            // 수량 선택을 위한 입력 필드 추가
+            echo "<label for='quantity_$row[PRODUCT_ID]'>수량:</label>";
+            echo "<input type='number' id='quantity_$row[PRODUCT_ID]' name='quantity' min='1' value='1'>";
 
-                // 장바구니 버튼 및 이벤트 핸들러 추가
-                echo "<button onclick='addToCart(" . $row['product_id'] . ", \"$row[product_name]\", " . $row['product_price'] . ")'>장바구니 담기</button>";
+            // 장바구니 버튼 및 이벤트 핸들러 추가
+            echo "<button onclick='addToCart($row[PRODUCT_ID], \"$row[PRODUCT_NAME]\", $row[PRODUCT_PRICE])'>장바구니 담기</button>";
 
-                echo "</div>";
-            }
-        } else {
-            echo "해당 상점에 등록된 상품이 없습니다.";
+            echo "</div>";
         }
 
         // 장바구니 표시
@@ -83,11 +69,13 @@
         // 결제 버튼
         echo "<button id='checkout-btn' onclick='checkout()'>결제하기</button>";
         echo "</div>";
+
+        oci_free_statement($stmt);
     } else {
         echo "잘못된 매개변수입니다.";
     }
 
-    $conn->close();
+    oci_close($conn);
     ?>
 
     <script>
@@ -233,7 +221,7 @@
                 receipt_num: receiptCount,
                 payment_method: 'Credit Card',
                 store_id: <?php echo $store_id; ?>,
-                user_id: <?php echo $user_id; ?>,
+                customer_id: <?php echo $customer_id; ?>,
             };
 
             // RECEIPT 테이블에 데이터 전송
@@ -252,9 +240,32 @@
             cart = [];
             updateCart();
 
-            // 페이지 새로고침 (혹은 다른 방법으로 사용자에게 알림)
-            location.reload();
+            // 결제 완료 후 고객 포인트 업데이트
+            var xhrUpdatePoints = new XMLHttpRequest();
+            xhrUpdatePoints.onreadystatechange = function () {
+                if (xhrUpdatePoints.readyState === XMLHttpRequest.DONE) {
+                    if (xhrUpdatePoints.status === 200) {
+                        // 성공 처리, 예: 성공 메시지 표시
+                        console.log(xhrUpdatePoints.responseText);
+                    } else {
+                        // 오류 처리, 예: 오류 메시지 표시
+                        console.error('고객 포인트 업데이트 오류');
+                    }
+                }
+            };
+
+            xhrUpdatePoints.open('POST', 'update_customer_point.php', true);
+            xhrUpdatePoints.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            // customer_id와 totalReceiptPrice를 전송
+            var customer_id = <?php echo $customer_id; ?>;
+            var params = 'customer_id=' + customer_id + '&total_receipt_price=' + totalReceiptPrice;
+
+            xhrUpdatePoints.send(params);
+
+            // 초기화면으로 이동
             alert('결제가 완료되었습니다.');
+            window.location.href = 'kiosk_login.php?store_id=<?php echo $store_id; ?>';
         }
     </script>
 </body>

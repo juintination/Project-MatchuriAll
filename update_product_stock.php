@@ -7,12 +7,12 @@ if (isset($_GET['product_id']) && isset($_GET['quantity'])) {
     $quantity = $_GET['quantity'];
 
     // 해당 상품의 현재 재고 확인
-    $stock_query = "SELECT product_stock FROM PRODUCT WHERE product_id = $product_id";
-    $stock_result = $conn->query($stock_query);
+    $stock_query = "SELECT PRODUCT_STOCK FROM PRODUCT WHERE PRODUCT_ID = $product_id";
+    $stock_stmt = oci_parse($conn, $stock_query);
+    oci_execute($stock_stmt);
 
-    if ($stock_result->num_rows > 0) {
-        $stock_row = $stock_result->fetch_assoc();
-        $current_stock = $stock_row['product_stock'];
+    if ($row = oci_fetch_assoc($stock_stmt)) {
+        $current_stock = $row['PRODUCT_STOCK'];
 
         // 결제된 수량만큼 재고 감소
         $new_stock = $current_stock - $quantity;
@@ -23,10 +23,15 @@ if (isset($_GET['product_id']) && isset($_GET['quantity'])) {
         }
 
         // 상품의 재고 업데이트
-        $update_query = "UPDATE PRODUCT SET product_stock = $new_stock WHERE product_id = $product_id";
-        $conn->query($update_query);
+        $update_query = "UPDATE PRODUCT SET PRODUCT_STOCK = $new_stock WHERE PRODUCT_ID = $product_id";
+        $update_stmt = oci_parse($conn, $update_query);
+        oci_execute($update_stmt);
+
+        oci_free_statement($update_stmt);
     }
+
+    oci_free_statement($stock_stmt);
 }
 
-$conn->close();
+oci_close($conn);
 ?>

@@ -2,141 +2,153 @@
 // DB 정보 불러오기
 include 'db_info.php';
 
-// 데이터베이스 생성
-$createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS $database";
-
-if ($conn->query($createDatabaseQuery) === TRUE) {
-    echo "데이터베이스가 성공적으로 생성되었습니다.<br>";
+// 시퀀스 생성
+$createSequenceQuery = "CREATE SEQUENCE demo_sequence START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE";
+if (oci_execute(oci_parse($conn, $createSequenceQuery))) {
+    echo "시퀀스가 성공적으로 생성되었습니다.<br>";
 } else {
-    echo "데이터베이스 생성 오류: " . $conn->error;
+    $error = oci_error($conn);
+    echo "시퀀스 생성 오류: " . $error['message'];
 }
 
-// 데이터베이스 선택
-$conn->select_db($database);
-
 // PROFILE 테이블 생성
-$profileQuery = "CREATE TABLE IF NOT EXISTS PROFILE (
-    profile_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    profile_pic MEDIUMBLOB NULL,
-    profile_info VARCHAR(255) NULL,
-    is_admin TINYINT(1)
+$profileQuery = "CREATE TABLE PROFILE (
+    profile_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    profile_pic BLOB,
+    profile_info VARCHAR2(255),
+    is_admin NUMBER(1)
 )";
 
-if ($conn->query($profileQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $profileQuery);
+    oci_execute($stmt);
     echo "PROFILE 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "PROFILE 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
 // ADMIN 테이블 생성
-$adminQuery = "CREATE TABLE IF NOT EXISTS ADMIN (
-    admin_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    admin_name VARCHAR(50),
+$adminQuery = "CREATE TABLE ADMIN (
+    admin_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    admin_name VARCHAR2(50),
     admin_birth DATE,
-    admin_phone VARCHAR(15),
-    admin_email VARCHAR(50),
-    admin_pw VARCHAR(20), -- 로그인을 위한 pw 속성 추가
-    profile_id BIGINT,
+    admin_phone VARCHAR2(15),
+    admin_email VARCHAR2(50),
+    admin_pw VARCHAR2(20),
+    profile_id NUMBER NOT NULL,
     FOREIGN KEY (profile_id) REFERENCES PROFILE(profile_id)
 )";
 
-if ($conn->query($adminQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $adminQuery);
+    oci_execute($stmt);
     echo "ADMIN 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "ADMIN 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
 // STORE 테이블 생성
-$storeQuery = "CREATE TABLE IF NOT EXISTS STORE (
-    store_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    store_name VARCHAR(100),
-    store_info VARCHAR(100),
-    classification VARCHAR(100),
-    admin_id BIGINT,
+$storeQuery = "CREATE TABLE STORE (
+    store_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    store_name VARCHAR2(100),
+    store_info VARCHAR2(100),
+    classification VARCHAR2(100),
+    admin_id NUMBER NOT NULL,
     FOREIGN KEY (admin_id) REFERENCES ADMIN(admin_id)
 )";
 
-if ($conn->query($storeQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $storeQuery);
+    oci_execute($stmt);
     echo "STORE 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "STORE 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
-// USER 테이블 생성
-$userQuery = "CREATE TABLE IF NOT EXISTS USER (
-    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_name VARCHAR(50),
-    user_birth DATE,
-    user_sex VARCHAR(10),
-    user_phone VARCHAR(15),
-    user_email VARCHAR(50), -- 로그인을 위한 유저 email 추가
-    user_pw VARCHAR(20), -- 로그인을 위한 pw 속성 추가
-    user_point BIGINT,
-    store_id BIGINT,
-    profile_id BIGINT,
+// CUSTOMER 테이블 생성
+$customerQuery = "CREATE TABLE CUSTOMER (
+    customer_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    customer_name VARCHAR2(50),
+    customer_birth DATE,
+    customer_sex VARCHAR2(10),
+    customer_phone VARCHAR2(15),
+    customer_email VARCHAR2(50),
+    customer_pw VARCHAR2(20),
+    customer_point NUMBER,
+    store_id NUMBER NOT NULL,
+    profile_id NUMBER NOT NULL,
     FOREIGN KEY (store_id) REFERENCES STORE(store_id),
     FOREIGN KEY (profile_id) REFERENCES PROFILE(profile_id)
 )";
 
-if ($conn->query($userQuery) === TRUE) {
-    echo "USER 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+try {
+    $stmt = oci_parse($conn, $customerQuery);
+    oci_execute($stmt);
+    echo "CUSTOMER 테이블이 성공적으로 생성되었습니다.<br>";
+} catch (Exception $e) {
+    $error = oci_error($stmt);
+    echo "CUSTOMER 테이블 생성 오류: " . $error['message'] . "<br>";
 }
 
 // PRODUCT 테이블 생성
-$productQuery = "CREATE TABLE IF NOT EXISTS PRODUCT (
-    product_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    product_name VARCHAR(20),
-    product_var VARCHAR(20),
-    product_price INT,
-    product_stock INT,
-    store_id BIGINT,
+$productQuery = "CREATE TABLE PRODUCT (
+    product_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    product_name VARCHAR2(20),
+    product_var VARCHAR2(20),
+    product_price NUMBER,
+    product_stock NUMBER,
+    store_id NUMBER NOT NULL,
     FOREIGN KEY (store_id) REFERENCES STORE(store_id)
 )";
 
-if ($conn->query($productQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $productQuery);
+    oci_execute($stmt);
     echo "PRODUCT 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "PRODUCT 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
 // RECEIPT 테이블 생성
-$receiptQuery = "CREATE TABLE IF NOT EXISTS RECEIPT (
-    receipt_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    receipt_num INT,
+$receiptQuery = "CREATE TABLE RECEIPT (
+    receipt_id NUMBER DEFAULT demo_sequence.NEXTVAL PRIMARY KEY,
+    receipt_num NUMBER,
     receipt_time TIMESTAMP,
-    receipt_price INT,
-    payment_method VARCHAR(20),
-    store_id BIGINT,
-    user_id BIGINT,
+    receipt_price NUMBER,
+    payment_method VARCHAR2(20),
+    store_id NUMBER NOT NULL,
+    customer_id NUMBER NOT NULL,
     FOREIGN KEY (store_id) REFERENCES STORE(store_id),
-    FOREIGN KEY (user_id) REFERENCES USER(user_id)
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
 )";
 
-if ($conn->query($receiptQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $receiptQuery);
+    oci_execute($stmt);
     echo "RECEIPT 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "RECEIPT 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
 // ORDER_DETAIL 테이블 생성
-$orderDetailQuery = "CREATE TABLE IF NOT EXISTS ORDER_DETAIL (
-    product_count INT,
-    intermediate_price INT,
-    receipt_id BIGINT,
-    product_id BIGINT,
+$orderDetailQuery = "CREATE TABLE ORDER_DETAIL (
+    product_count NUMBER,
+    intermediate_price NUMBER,
+    receipt_id NUMBER NOT NULL,
+    product_id NUMBER NOT NULL,
     PRIMARY KEY (receipt_id, product_id),
     FOREIGN KEY (receipt_id) REFERENCES RECEIPT(receipt_id),
     FOREIGN KEY (product_id) REFERENCES PRODUCT(product_id)
 )";
 
-if ($conn->query($orderDetailQuery) === TRUE) {
+try {
+    $stmt = oci_parse($conn, $orderDetailQuery);
+    oci_execute($stmt);
     echo "ORDER_DETAIL 테이블이 성공적으로 생성되었습니다.<br>";
-} else {
-    echo "테이블 생성 오류: " . $conn->error;
+} catch (Exception $e) {
+    echo "ORDER_DETAIL 테이블 생성 오류: " . $e->getMessage() . "<br>";
 }
 
 // 연결 종료
-$conn->close();
+oci_close($conn);
 ?>
