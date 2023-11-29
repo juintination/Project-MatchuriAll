@@ -12,7 +12,7 @@ if ($user_type === "admin") {
     // 관리자로 로그인
     $sql = "SELECT ADMIN.*, STORE.store_name 
             FROM ADMIN
-            LEFT JOIN STORE ON ADMIN.admin_id = STORE.admin_id
+            LEFT JOIN STORE ON ADMIN.store_id = STORE.store_id
             WHERE ADMIN.admin_email = :email AND ADMIN.admin_pw = :password";
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ':email', $email);
