@@ -101,7 +101,7 @@
             echo "<tr><th>상품 ID</th><th>상품명</th><th>상품 종류</th><th>가격(원)</th><th>재고</th><th>수정</th></tr>";
 
             // 해당 STORE에 속한 PRODUCT들을 조회하는 쿼리
-            $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id ORDER BY store_id ASC";
+            $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id";
             $stmtProduct = oci_parse($conn, $sqlProduct);
             oci_bind_by_name($stmtProduct, ':store_id', $store_id);
             oci_execute($stmtProduct);
