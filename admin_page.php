@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="css/adminpage.css">
     <title>Admin Page</title>
     <style>
         /* 프로필 사진 이미지 스타일 */
@@ -10,212 +11,222 @@
             object-fit: cover;
             border-radius: 50%;
         }
-        /* 테이블 스타일 */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
-    <h1>Welcome to the Admin Page</h1>
+    <div class="container">
+        <form action="index.php">
+            <input type="submit" value="로그아웃" class='button' style='float: right;'>
+        </form>
+        <form action="kiosk_login.php" method="get">
+            <input type="hidden" name="store_id" value="<?php echo $store_id; ?>">
+            <input type="submit" value="키오스크 들어가기" class='button'>
+        </form>
+        <header>Welcome to the Admin Page</header>
+        <div class="item_name">
+            <?php
+            // DB 정보 불러오기
+            include 'db_info.php';
 
-    <?php
-    // DB 정보 불러오기
-    include 'db_info.php';
+            // 관리자 정보를 데이터베이스에서 가져오는 쿼리
+            $store_id = $_GET['store_id'];
+            $sql = "SELECT ADMIN.*, STORE.store_name, STORE.classification
+                    FROM ADMIN
+                    LEFT JOIN STORE ON ADMIN.admin_id = STORE.admin_id
+                    WHERE STORE.store_id = :store_id";
 
-    // 관리자 정보를 데이터베이스에서 가져오는 쿼리
-    $store_id = $_GET['store_id'];
-    $sql = "SELECT ADMIN.*, STORE.store_name, STORE.classification
-            FROM ADMIN
-            LEFT JOIN STORE ON ADMIN.admin_id = STORE.admin_id
-            WHERE STORE.store_id = :store_id";
+            $stmt = oci_parse($conn, $sql);
+            oci_bind_by_name($stmt, ':store_id', $store_id);
+            oci_execute($stmt);
 
-    $stmt = oci_parse($conn, $sql);
-    oci_bind_by_name($stmt, ':store_id', $store_id);
-    oci_execute($stmt);
+            $adminRow = oci_fetch_assoc($stmt);
 
-    $adminRow = oci_fetch_assoc($stmt);
+            if ($adminRow) {
+                // 관리자 정보를 출력
+                echo "<p><strong>관리자 이름:</strong> " . $adminRow['ADMIN_NAME'] . "</p>";
 
-    if ($adminRow) {
-        // 관리자 정보를 출력
-        echo "<p><strong>Admin Name:</strong> " . $adminRow['ADMIN_NAME'] . "</p>";
-        echo "<p><strong>Date of Birth:</strong> " . $adminRow['ADMIN_BIRTH'] . "</p>";
-        echo "<p><strong>Phone Number:</strong> " . $adminRow['ADMIN_PHONE'] . "</p>";
-        echo "<p><strong>Email:</strong> " . $adminRow['ADMIN_EMAIL'] . "</p>";
+                // 날짜 포맷팅
+                $adminBirthdate = date_create_from_format("d-M-y", $adminRow['ADMIN_BIRTH']);
+                echo "<p><strong>생일:</strong> " . $adminBirthdate->format('Y년 m월 d일') . "</p>";
 
-        // 관리자의 프로필 정보를 데이터베이스에서 가져오는 쿼리
-        $profile_id = $adminRow['PROFILE_ID'];
-        if (isset($profile_id)) {
-            $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
-            $stmtProfile = oci_parse($conn, $sqlProfile);
-            oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
-            oci_execute($stmtProfile);
+                echo "<p><strong>연락처:</strong> " . $adminRow['ADMIN_PHONE'] . "</p>";
+                echo "<p><strong>Email:</strong> " . $adminRow['ADMIN_EMAIL'] . "</p>";
+                ?>
+            </div>
+            <div class="item">
+                <?php
+                // 관리자의 프로필 정보를 데이터베이스에서 가져오는 쿼리
+                $profile_id = $adminRow['PROFILE_ID'];
+                if (isset($profile_id)) {
+                    $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
+                    $stmtProfile = oci_parse($conn, $sqlProfile);
+                    oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
+                    oci_execute($stmtProfile);
 
-            $rowProfile = oci_fetch_assoc($stmtProfile);
+                    $rowProfile = oci_fetch_assoc($stmtProfile);
 
-            // 사용자의 프로필 정보를 출력
-            echo "<p><strong>Profile ID:</strong> " . $rowProfile['PROFILE_ID'] . "</p>";
+                    // 사용자의 프로필 정보를 출력
+                    echo "<p><strong>Profile ID:</strong> " . $rowProfile['PROFILE_ID'] . "</p>";
 
-            // 프로필 사진을 출력
-            if ($rowProfile['PROFILE_PIC']->size() > 0) {
-                $profile_pic = base64_encode($rowProfile['PROFILE_PIC']->load());
-                echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
+                    // 프로필 사진을 출력
+                    if ($rowProfile['PROFILE_PIC']->size() > 0) {
+                        $profile_pic = base64_encode($rowProfile['PROFILE_PIC']->load());
+                        echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
+                    } else {
+                        echo "<p>No profile picture available.</p>";
+                    }
+                    echo "<p><strong>Profile Info:</strong> " . $rowProfile['PROFILE_INFO'] . "</p>";
+
+                    // 프로필 수정 버튼
+                    echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id' class='button_edit'>프로필 수정</a>";
+
+                    oci_free_statement($stmtProfile);
+                } else {
+                    echo "Profile ID is not set.";
+                }
+                ?>
+            </div><br><br><br><br><br>
+
+            <div class="item_product">
+                <h1>가게 정보</h1>
+                <?php
+                // 가게 정보를 출력                 
+                echo "<p><strong>가게 이름:</strong> " . $adminRow['STORE_NAME'] . "</p>";
+                echo "<p><strong>분류:</strong> " . $adminRow['CLASSIFICATION'] . "</p>";
+
+                // PRODUCT 리스트 출력
+                echo "<br><h2>상품 정보</h2>";
+                echo "<table>";
+                echo "<tr><th>상품 ID</th><th>상품명</th><th>상품 종류</th><th>가격(원)</th><th>재고</th><th>수정</th></tr>";
+
+                // 해당 STORE에 속한 PRODUCT들을 조회하는 쿼리
+                $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id ORDER BY PRODUCT_ID ASC";
+                $stmtProduct = oci_parse($conn, $sqlProduct);
+                oci_bind_by_name($stmtProduct, ':store_id', $store_id);
+                oci_execute($stmtProduct);
+
+                if (oci_fetch($stmtProduct)) {
+
+                    while ($rowProduct = oci_fetch_assoc($stmtProduct)) {
+                        echo "<tr>";
+                        echo "<td>" . $rowProduct['PRODUCT_ID'] . "</td>";
+                        echo "<td>" . $rowProduct['PRODUCT_NAME'] . "</td>";
+                        echo "<td>" . $rowProduct['PRODUCT_VAR'] . "</td>";
+                        echo "<td>" . $rowProduct['PRODUCT_PRICE'] . "</td>";
+                        echo "<td>" . $rowProduct['PRODUCT_STOCK'] . "</td>";
+                        echo "<td><a href='edit_product.php?product_id=" . $rowProduct['PRODUCT_ID'] . "&store_id=$store_id'>Edit</a></td>";
+                        echo "</tr>";
+                    }
+    
+                    echo "</table>";
+
+                } else {
+                    echo "<table>";
+                    echo "<tr class='receipt-item'>";
+                    echo "<td colspan='6'>아직 이 가게에 아무런 상품도 등록되지 않았네요!</td>";
+                    echo "</tr>";
+                    echo "</table>";
+                }
+
+                oci_free_statement($stmtProduct);
+
+                // 총 수익 계산
+                $sqlTotalRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TOTAL_REVENUE
+                FROM RECEIPT
+                WHERE RECEIPT.STORE_ID = :store_id";
+
+                $stmtTotalRevenue = oci_parse($conn, $sqlTotalRevenue);
+                oci_bind_by_name($stmtTotalRevenue, ':store_id', $store_id);
+                oci_execute($stmtTotalRevenue);
+
+                $totalRevenueRow = oci_fetch_assoc($stmtTotalRevenue);
+                $totalRevenue = $totalRevenueRow['TOTAL_REVENUE'];
+
+                oci_free_statement($stmtTotalRevenue);
+
+                // 오늘 하루 동안의 수익
+                $sqlTodayRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TODAY_REVENUE
+                FROM RECEIPT
+                WHERE RECEIPT.STORE_ID = :store_id
+                AND TRUNC(RECEIPT.RECEIPT_TIME) = TRUNC(SYSDATE)";
+
+                $stmtTodayRevenue = oci_parse($conn, $sqlTodayRevenue);
+                oci_bind_by_name($stmtTodayRevenue, ':store_id', $store_id);
+                oci_execute($stmtTodayRevenue);
+
+                $todayRevenueRow = oci_fetch_assoc($stmtTodayRevenue);
+                $todayRevenue = $todayRevenueRow['TODAY_REVENUE'];
+
+                oci_free_statement($stmtTodayRevenue);
+
+                // 최근 일주일 동안의 수익
+                $sqlLastWeekRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_WEEK_REVENUE
+                FROM RECEIPT
+                WHERE RECEIPT.STORE_ID = :store_id
+                AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE) - 7";
+
+                $stmtLastWeekRevenue = oci_parse($conn, $sqlLastWeekRevenue);
+                oci_bind_by_name($stmtLastWeekRevenue, ':store_id', $store_id);
+                oci_execute($stmtLastWeekRevenue);
+
+                $lastWeekRevenueRow = oci_fetch_assoc($stmtLastWeekRevenue);
+                $lastWeekRevenue = $lastWeekRevenueRow['LAST_WEEK_REVENUE'];
+
+                oci_free_statement($stmtLastWeekRevenue);
+
+                // 최근 한 달 동안의 수익
+                $sqlLastMonthRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_MONTH_REVENUE
+                    FROM RECEIPT
+                    WHERE RECEIPT.STORE_ID = :store_id
+                    AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE, 'MM')";
+
+                $stmtLastMonthRevenue = oci_parse($conn, $sqlLastMonthRevenue);
+                oci_bind_by_name($stmtLastMonthRevenue, ':store_id', $store_id);
+                oci_execute($stmtLastMonthRevenue);
+
+                $lastMonthRevenueRow = oci_fetch_assoc($stmtLastMonthRevenue);
+                $lastMonthRevenue = $lastMonthRevenueRow['LAST_MONTH_REVENUE'];
+
+                oci_free_statement($stmtLastMonthRevenue);
+
+                // 수익 정보 표시
+                echo "<h2>매출 정보</h2>";
+                echo "<table>";
+                echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>최근 한 달 동안의 수익</th><th>자세히 보기</th></tr>";
+                echo "<tr>";
+                echo "<td>" . number_format($totalRevenue) . "원</td>";
+                echo "<td>" . number_format($todayRevenue) . "원</td>";
+                echo "<td>" . number_format($lastWeekRevenue) . "원</td>";
+                echo "<td>" . number_format($lastMonthRevenue) . "원</td>";
+                echo "<td><a href='get_profit.php?store_id=$store_id'>보러가기</a></td>";
+                echo "</tr>";
+                echo "</table>";
+
+
+                // 상품 추가 버튼
+                echo "<br><h2>상품 추가하기</h2>";
+                echo "<form action='add_product.php' method='post' class='item_input'>";
+                echo "<label for='productName'>상품명:</label>";
+                echo "<input class='input' type='text' name='productName' required style='border-radius: 5px;'><br>";
+
+                echo "<label for='productVar'>상품 종류:</label>";
+                echo "<input class='input' type='text' name='productVar' required style='border-radius: 5px;'><br>";
+
+                echo "<label for='productPrice'>가격(원):</label>";
+                echo "<input class='input' type='number' name='productPrice' required style='border-radius: 5px;'><br>";
+
+                echo "<input type='hidden' name='store_id' value='$store_id'>";
+                echo "<input type='submit' class='button_product' value='상품 추가하기'>";
+                echo "</form>";
+
             } else {
-                echo "<p>No profile picture available.</p>";
+                echo "Admin not found.";
             }
 
-            echo "<p><strong>Profile Info:</strong> " . $rowProfile['PROFILE_INFO'] . "</p>";
-
-            // 프로필 수정 버튼
-            echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id'>프로필 수정</a>";
-
-            oci_free_statement($stmtProfile);
-        } else {
-            echo "Profile ID is not set.";
-        }
-
-        // 가게 정보를 출력
-        echo "<p><strong>Store Name:</strong> " . $adminRow['STORE_NAME'] . "</p>";
-        echo "<p><strong>Classification:</strong> " . $adminRow['CLASSIFICATION'] . "</p>";
-
-        // PRODUCT 리스트 출력
-        echo "<h2>Product List</h2>";
-        echo "<table>";
-        echo "<tr><th>상품 ID</th><th>상품명</th><th>상품 종류</th><th>가격(원)</th><th>재고</th><th>수정</th></tr>";
-
-        // 해당 STORE에 속한 PRODUCT들을 조회하는 쿼리
-        $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id";
-        $stmtProduct = oci_parse($conn, $sqlProduct);
-        oci_bind_by_name($stmtProduct, ':store_id', $store_id);
-        oci_execute($stmtProduct);
-
-        while ($rowProduct = oci_fetch_assoc($stmtProduct)) {
-            echo "<tr>";
-            echo "<td>" . $rowProduct['PRODUCT_ID'] . "</td>";
-            echo "<td>" . $rowProduct['PRODUCT_NAME'] . "</td>";
-            echo "<td>" . $rowProduct['PRODUCT_VAR'] . "</td>";
-            echo "<td>" . $rowProduct['PRODUCT_PRICE'] . "</td>";
-            echo "<td>" . $rowProduct['PRODUCT_STOCK'] . "</td>";
-            echo "<td><a href='edit_product.php?product_id=" . $rowProduct['PRODUCT_ID'] . "&store_id=$store_id'>Edit</a></td>";
-            echo "</tr>";
-        }
-
-        oci_free_statement($stmtProduct);
-        echo "</table>";
-
-        // 총 수익 계산
-        $sqlTotalRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TOTAL_REVENUE
-        FROM RECEIPT
-        WHERE RECEIPT.STORE_ID = :store_id";
-
-        $stmtTotalRevenue = oci_parse($conn, $sqlTotalRevenue);
-        oci_bind_by_name($stmtTotalRevenue, ':store_id', $store_id);
-        oci_execute($stmtTotalRevenue);
-
-        $totalRevenueRow = oci_fetch_assoc($stmtTotalRevenue);
-        $totalRevenue = $totalRevenueRow['TOTAL_REVENUE'];
-
-        oci_free_statement($stmtTotalRevenue);
-
-        // 오늘 하루 동안의 수익
-        $sqlTodayRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS TODAY_REVENUE
-        FROM RECEIPT
-        WHERE RECEIPT.STORE_ID = :store_id
-        AND TRUNC(RECEIPT.RECEIPT_TIME) = TRUNC(SYSDATE)";
-
-        $stmtTodayRevenue = oci_parse($conn, $sqlTodayRevenue);
-        oci_bind_by_name($stmtTodayRevenue, ':store_id', $store_id);
-        oci_execute($stmtTodayRevenue);
-
-        $todayRevenueRow = oci_fetch_assoc($stmtTodayRevenue);
-        $todayRevenue = $todayRevenueRow['TODAY_REVENUE'];
-
-        oci_free_statement($stmtTodayRevenue);
-
-        // 최근 일주일 동안의 수익
-        $sqlLastWeekRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_WEEK_REVENUE
-        FROM RECEIPT
-        WHERE RECEIPT.STORE_ID = :store_id
-        AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE) - 7";
-
-        $stmtLastWeekRevenue = oci_parse($conn, $sqlLastWeekRevenue);
-        oci_bind_by_name($stmtLastWeekRevenue, ':store_id', $store_id);
-        oci_execute($stmtLastWeekRevenue);
-
-        $lastWeekRevenueRow = oci_fetch_assoc($stmtLastWeekRevenue);
-        $lastWeekRevenue = $lastWeekRevenueRow['LAST_WEEK_REVENUE'];
-
-        oci_free_statement($stmtLastWeekRevenue);
-
-        // 최근 한 달 동안의 수익
-        $sqlLastMonthRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_MONTH_REVENUE
-            FROM RECEIPT
-            WHERE RECEIPT.STORE_ID = :store_id
-            AND TRUNC(RECEIPT.RECEIPT_TIME) >= TRUNC(SYSDATE, 'MM')";
-
-        $stmtLastMonthRevenue = oci_parse($conn, $sqlLastMonthRevenue);
-        oci_bind_by_name($stmtLastMonthRevenue, ':store_id', $store_id);
-        oci_execute($stmtLastMonthRevenue);
-
-        $lastMonthRevenueRow = oci_fetch_assoc($stmtLastMonthRevenue);
-        $lastMonthRevenue = $lastMonthRevenueRow['LAST_MONTH_REVENUE'];
-
-        oci_free_statement($stmtLastMonthRevenue);
-
-        // 수익 정보 표시
-        echo "<h2>Profit Information</h2>";
-        echo "<table>";
-        echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>최근 한 달 동안의 수익</th><th>자세히 보기</th></tr>";
-        echo "<tr>";
-        echo "<td>" . number_format($totalRevenue) . "원</td>";
-        echo "<td>" . number_format($todayRevenue) . "원</td>";
-        echo "<td>" . number_format($lastWeekRevenue) . "원</td>";
-        echo "<td>" . number_format($lastMonthRevenue) . "원</td>";
-        echo "<td><a href='get_profit.php?store_id=$store_id'>보러가기</a></td>";
-        echo "</tr>";
-        echo "</table>";
-
-        // 상품 추가 버튼
-        echo "<h2>Add Product</h2>";
-        echo "<form action='add_product.php' method='post'>";
-        echo "<label for='productName'>Product Name:</label>";
-        echo "<input type='text' name='productName' required><br>";
-
-        echo "<label for='productVar'>Product Variant:</label>";
-        echo "<input type='text' name='productVar' required><br>";
-
-        echo "<label for='productPrice'>Price:</label>";
-        echo "<input type='number' name='productPrice' required><br>";
-
-        echo "<input type='hidden' name='store_id' value='$store_id'>";
-        echo "<input type='submit' value='Add Product'>";
-        echo "</form>";
-
-    } else {
-        echo "Admin not found.";
-    }
-
-    oci_free_statement($stmt);
-    oci_close($conn);
-    ?>
-
-    <h1>키오스크 들어가기</h1>
-    <form action="kiosk_login.php" method="get">
-        <input type="hidden" name="store_id" value="<?php echo $store_id; ?>">
-        <input type="submit" value="키오스크 들어가기">
-    </form>
-
-    <h1>처음으로 돌아가기</h1>
-    <form action="index.php">
-        <input type="submit" value="처음으로 돌아가기">
-    </form>
+            oci_free_statement($stmt);
+            oci_close($conn);
+            ?>
+        </div>
+    </div>
 </body>
 </html>

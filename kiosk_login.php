@@ -4,11 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiosk Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin : 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5865f5;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button:hover {
+            background-color: #4d59db;
+        }
+        h1{
+            font-family: 'Gothic A1', sans-serif;
+        }
+        label{
+            text-align: center;
+        }
+
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@900&display=swap" rel="stylesheet">
 </head>
 <body>
     <?php
     include 'db_info.php';
 
+    // Retrieve store name based on store_id
     $store_id = $_GET['store_id'];
     $store_name_query = "SELECT store_name FROM STORE WHERE store_id = :store_id";
     $store_name_stmt = oci_parse($conn, $store_name_query);
@@ -17,7 +76,7 @@
     $store_name_row = oci_fetch_assoc($store_name_stmt);
     $store_name = ($store_name_row) ? $store_name_row['STORE_NAME'] : 'Unknown Store';
 
-    // Welcome to [STORE_NAME]'s Kiosk!
+    // Set the title dynamically
     echo "<h1>Welcome to $store_name's Kiosk!</h1>";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -46,10 +105,11 @@
     ?>
 
     <form method="post" action="">
-        <label for="customer_phone">Customer Phone:</label>
+        <label for="customer_phone">Customer Phone</label>
         <input type="text" id="customer_phone" name="customer_phone" required>
-        <button type="submit">Login</button>
+        <button type="submit">LOGIN</button>
     </form>
+
 
     <?php oci_close($conn); ?>
 </body>

@@ -3,6 +3,16 @@
 <head>
     <title>Order Detail</title>
     <style>
+        body{
+            background-color: #4d59db;
+        }
+        h1 {
+            text-align: center;
+            margin-top:50px;
+            margin-bottom: 30px;
+            color: whitesmoke;
+            font-family: 'Nova Square', sans-serif;
+        }
         /* 테이블 스타일 */
         table {
             border-collapse: collapse;
@@ -13,16 +23,46 @@
         table, th, td {
             border: 1px solid #ddd;
         }
+        th {
+            background-color: #f2f2f2;
+        }
 
         th, td {
             padding: 10px;
             text-align: left;
         }
+        h2 {
+            margin-top: 30px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .order-detail-link {
+            text-decoration: none;
+            color: #848b91;
+            font-weight: bold;
+        }
+
+        .order-detail-link:hover {
+            text-decoration: underline;
+        }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Order Detail</h1>
-
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <h1>Order Detail</h1><br>
+<div class='container'>
     <?php
     // DB 정보 불러오기
     include 'db_info.php';
@@ -37,7 +77,7 @@
     oci_execute($stmtReceipt);
 
     // 구매 내역 표 헤더 출력
-    echo "<h2>구매 내역</h2>";
+    echo "<h2><i class='fa fa-shopping-cart' aria-hidden='true'></i> 구매 내역</h2>";
     echo "<table>";
     echo "<tr>";
     echo "<th>구매 번호</th>";
@@ -57,7 +97,7 @@
         
         // 날짜 포맷팅
         $purchaseDate = date_create_from_format("d-M-y h.i.s A", $receiptRow['RECEIPT_TIME']);
-        echo "<td>" . $purchaseDate->format('d-M-y h.i.s A') . "</td>";
+        echo "<td>" . $purchaseDate->format('Y년 m월 d일 H시 i분 s초') . "</td>";
 
         echo "<td><a class='order-detail-link' href='javascript:history.go(-1)'>돌아가기</a></td>";
 
@@ -73,7 +113,7 @@
     oci_execute($stmtOrderDetail);
 
     // 상세 내역 표 헤더 출력
-    echo "<h2>상세 내역</h2>";
+    echo "<h2><i class='fa fa-list-ul' aria-hidden='true'></i> 상세 내역</h2>";
     echo "<table>";
     echo "<tr>";
     echo "<th>영수증 ID</th>";
@@ -109,5 +149,6 @@
     oci_free_statement($stmtOrderDetail);
     oci_close($conn);
     ?>
+    </div>
 </body>
 </html>
