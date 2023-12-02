@@ -449,6 +449,24 @@
                 xhrOrderDetail.setRequestHeader('Content-Type', 'application/json');
                 xhrOrderDetail.send(JSON.stringify({ receipt_id: xhrReceipt.responseText, products: orderDetailData }));
 
+                // 결제 완료 후 고객 포인트 업데이트
+                var xhrUpdatePoints = new XMLHttpRequest();
+                xhrUpdatePoints.onreadystatechange = function () {
+                    if (xhrUpdatePoints.readyState === XMLHttpRequest.DONE) {
+                        if (xhrUpdatePoints.status === 200) {
+                            // 성공 처리, 예: 성공 메시지 표시
+                            console.log(xhrUpdatePoints.responseText);
+                        } else {
+                            // 오류 처리, 예: 오류 메시지 표시
+                            console.error('고객 포인트 업데이트 오류');
+                        }
+                    }
+                };
+
+                xhrUpdatePoints.open('POST', 'update_customer_point.php', true);
+                xhrUpdatePoints.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhrUpdatePoints.send('customer_id=<?php echo $customer_id; ?>&total_receipt_price=' + totalReceiptPrice);
+
                 // 결제 후 장바구니 비우기
                 cart = [];
                 updateCart();
