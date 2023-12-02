@@ -22,7 +22,7 @@
             include 'db_info.php';
 
             // 가게 목록 불러오기
-            $sql = "SELECT store_id, store_name FROM STORE";
+            $sql = "SELECT store_id, store_name FROM STORE ORDER BY store_id ASC";
             $result = oci_parse($conn, $sql);
             oci_execute($result);
 
