@@ -2,9 +2,65 @@
 <html>
 <head>
     <title>Edit Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin : 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #5865f5;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #4d59db;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #666;
+        }
+        h1{
+            font-family: 'Nova Square', sans-serif;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Edit Product</h1>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <h1><i class="fa fa-pencil" aria-hidden="true"></i> Edit Product</h1>
 
     <?php
     // DB 정보 불러오기
@@ -87,6 +143,6 @@
     oci_close($conn);
     ?>
 
-    <a href="admin_page.php?store_id=<?php echo $store_id; ?>">뒤로 가기</a>
+    <a href="admin_page.php?store_id=<?php echo $store_id; ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> 뒤로 가기</a>
 </body>
 </html>
