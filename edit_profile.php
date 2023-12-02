@@ -46,14 +46,8 @@
             var profileInfo = document.getElementById('profile_info').value;
 
             // 프로필 정보 길이 확인
-            if (profileInfo.length >= 10) {
+            if (profileInfo.length > 10) {
                 alert('프로필 정보는 10글자 이하로 입력해주세요.');
-                return false; // 변경 취소
-            }
-
-            // 개행 확인
-            if (profileInfo.includes('\n')) {
-                alert('프로필 정보에는 개행이 포함될 수 없습니다.');
                 return false; // 변경 취소
             }
 
@@ -69,6 +63,7 @@
 
         .card {
             border-radius: 3%;
+            min-width: 800px;
         }
 
         img.profile_pic_style {
@@ -246,8 +241,10 @@
                                                     <span>회원 탈퇴</span>
                                                 </button>
                                             </div>
+                                            <div class='px-xl-3'>
+                                                <button class='btn btn-primary' type='submit' name='submit' onclick='return checkProfileInfo()'>프로필 변경</button>
                                             </div>
-                                            <button class='btn btn-primary' type='submit' name='submit' onclick='return checkProfileInfo()'>프로필 변경</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
