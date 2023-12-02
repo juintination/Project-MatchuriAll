@@ -19,7 +19,7 @@
             <input type="submit" value="로그아웃" class='button' style='float: right;'>
         </form>
         <form action="kiosk_login.php" method="get">
-            <input type="hidden" name="store_id" value="<?php echo $store_id; ?>">
+            <input type="hidden" name="store_id" value="<?php echo $_GET['store_id']; ?>">
             <input type="submit" value="키오스크 들어가기" class='button'>
         </form>
         <header>Welcome to the Admin Page</header>
