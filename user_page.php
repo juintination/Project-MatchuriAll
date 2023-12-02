@@ -97,34 +97,34 @@
         <div class="info_container">
             <div class="item_profile">
                 <?php
-                        if (isset($profile_id)) {
-                            $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
-                            $stmtProfile = oci_parse($conn, $sqlProfile);
-                            oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
-                            oci_execute($stmtProfile);
-        
-                            $profileRow = oci_fetch_assoc($stmtProfile);
-        
-                            if ($profileRow) {
-                                // 고객의 프로필 정보를 출력
-                                echo "<p><strong>Profile ID:</strong> " . $profileRow['PROFILE_ID'] . "</p>";
-                                
-                                // 프로필 사진을 출력
-                                if (!empty($profileRow['PROFILE_PIC'])) {
-                                    $profile_pic = base64_encode($profileRow['PROFILE_PIC']->load());
-                                    echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
-                                } else {
-                                    echo "<p>No profile picture available.</p>";
-                                }
-                                
-                                echo "<p><strong>Profile Info:</strong></p>";
-                                echo "<p>" . $profileRow['PROFILE_INFO'] . "</p>";
-                                
+                    if (isset($profile_id)) {
+                        $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
+                        $stmtProfile = oci_parse($conn, $sqlProfile);
+                        oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
+                        oci_execute($stmtProfile);
+    
+                        $profileRow = oci_fetch_assoc($stmtProfile);
+    
+                        if ($profileRow) {
+                            // 고객의 프로필 정보를 출력
+                            echo "<p><strong>Profile ID:</strong> " . $profileRow['PROFILE_ID'] . "</p>";
+                            
+                            // 프로필 사진을 출력
+                            if (!empty($profileRow['PROFILE_PIC'])) {
+                                $profile_pic = base64_encode($profileRow['PROFILE_PIC']->load());
+                                echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
                             } else {
-                                echo "Profile not found.";
+                                echo "<p>No profile picture available.</p>";
                             }
-        
-                            oci_free_statement($stmtProfile);
+                            
+                            echo "<p><strong>Profile Info:</strong></p>";
+                            echo isset($profileRow['PROFILE_INFO']) ? "<p>" . $profileRow['PROFILE_INFO'] . "</p>" : "<p>No Profile Info</p>";
+                            
+                        } else {
+                            echo "Profile not found.";
+                        }
+    
+                        oci_free_statement($stmtProfile);
                 ?>
             </div>
             <div class="item_user">
@@ -146,7 +146,6 @@
                 ?>
             </div>
         </div>
-        <br>
         <div class="item_receipt">
             <?php
                     // 해당 고객의 구매 내역을 나열하는 쿼리
@@ -156,7 +155,7 @@
                     oci_execute($stmtReceipt);
 
                     // 구매 내역을 스타일이 적용된 카드로 표시
-                    echo "<h2>구매 내역</h2><br>";
+                    echo '<h2 style="margin-left: 5px;">구매 내역</h2>';
                     
                     // 표 헤더 출력
                     echo "<table>";

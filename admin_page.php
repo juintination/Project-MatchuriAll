@@ -72,7 +72,7 @@
                         }
                         
                         echo "<p><strong>Profile Info:</strong></p>";
-                        echo "<p>" . $rowProfile['PROFILE_INFO'] . "</p>";
+                        echo isset($rowProfile['PROFILE_INFO']) ? "<p>" . $rowProfile['PROFILE_INFO'] . "</p>" : "<p>No Profile Info</p>";
     
                         oci_free_statement($stmtProfile);
                     } else {
@@ -83,20 +83,20 @@
             <div class="item_admin">
                 <?php
                     // 관리자 정보를 출력
-                    echo "<p><strong>관리자 이름:</strong> " . $adminRow['ADMIN_NAME'] . "</p>";
+                    echo "<p><strong>Admin Name:</strong> " . $adminRow['ADMIN_NAME'] . "</p>";
     
                     // 날짜 포맷팅
                     $adminBirthdate = date_create_from_format("d-M-y", $adminRow['ADMIN_BIRTH']);
-                    echo "<p><strong>생일:</strong> " . $adminBirthdate->format('Y년 m월 d일') . "</p>";
+                    echo "<p><strong>Day of Birth:</strong> " . $adminBirthdate->format('Y년 m월 d일') . "</p>";
     
-                    echo "<p><strong>연락처:</strong> " . $adminRow['ADMIN_PHONE'] . "</p>";
+                    echo "<p><strong>Phone Number:</strong> " . $adminRow['ADMIN_PHONE'] . "</p>";
                     echo "<p><strong>Email:</strong> " . $adminRow['ADMIN_EMAIL'] . "</p>";
                 ?>
             </div><br><br><br><br><br>
         </div>
         <?php
             // PRODUCT 리스트 출력
-            echo "<br><h2>상품 정보</h2>";
+            echo '<h2 style="margin-left: 10px;">상품 정보</h2>';
             echo "<table>";
             echo "<tr><th>상품 ID</th><th>상품명</th><th>상품 종류</th><th>가격(원)</th><th>재고</th><th>수정</th></tr>";
 
@@ -190,7 +190,8 @@
             oci_free_statement($stmtLastMonthRevenue);
 
             // 수익 정보 표시
-            echo "<h2>매출 정보</h2>";
+            echo "<br>";
+            echo '<h2 style="margin-left: 10px;">매출 정보</h2>';
             echo "<table>";
             echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>이번 달의 수익</th><th>자세히 보기</th></tr>";
             echo "<tr>";
@@ -204,7 +205,8 @@
 
 
             // 상품 추가 버튼
-            echo "<br><h2>상품 추가하기</h2>";
+            echo "<br>";
+            echo '<h2 style="margin-left: 10px;">상품 추가하기</h2>';
             echo "<form action='add_product.php' method='post' class='item_input'>";
             echo "<label for='productName'>상품명:</label>";
             echo "<input class='input' type='text' name='productName' required style='border-radius: 5px;'><br>";

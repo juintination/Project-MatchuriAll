@@ -60,16 +60,20 @@ body {
 
 .item_profile {
   margin-top: 25px;
-  width: 25%;
+  margin-bottom: 0;
+  width: 22%;
   display: inline-block;
   border-radius: 8px;
   background: #fff;
 }
 .item_user {
-  margin-top: 25px;
-  width: 75%;
+  float: left;
+  width: 50%;
   background: #fff;
-  border-radius: 8px;  
+  padding: 25px;
+  padding-top: 80px;
+  padding-bottom: 0;
+  border-radius: 8px;
 }
 .item_receipt {
   width: 100%;
