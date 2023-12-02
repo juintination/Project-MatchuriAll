@@ -174,7 +174,7 @@
 
                 oci_free_statement($stmtLastWeekRevenue);
 
-                // 최근 한 달 동안의 수익
+                // 이번 달의 수익
                 $sqlLastMonthRevenue = "SELECT SUM(RECEIPT.RECEIPT_PRICE) AS LAST_MONTH_REVENUE
                     FROM RECEIPT
                     WHERE RECEIPT.STORE_ID = :store_id
@@ -192,7 +192,7 @@
                 // 수익 정보 표시
                 echo "<h2>매출 정보</h2>";
                 echo "<table>";
-                echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>최근 한 달 동안의 수익</th><th>자세히 보기</th></tr>";
+                echo "<tr><th>총 수익</th><th>오늘의 수익</th><th>최근 일주일 동안의 수익</th><th>이번 달의 수익</th><th>자세히 보기</th></tr>";
                 echo "<tr>";
                 echo "<td>" . number_format($totalRevenue) . "원</td>";
                 echo "<td>" . number_format($todayRevenue) . "원</td>";

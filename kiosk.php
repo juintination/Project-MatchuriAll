@@ -166,6 +166,7 @@
         .checkout-button-container {
             text-align: center;
             position: relative;
+            top: 10px;
             bottom: 10px;
             display: flex;
             justify-content: center;
@@ -309,14 +310,14 @@
                     var totalItemPrice = cart[i].price * cart[i].quantity;
 
                     cartItem.innerHTML = `
-                        <div class="item-info">${cart[i].name}</div>
-                        <div class="item-price">${cart[i].price}</div>
+                        <div class="item-info">상품명: ${cart[i].name}</div>
+                        <div class="item-price">가격: ${cart[i].price}(원)</div>
                         <div class="item-quantity">
                             <button class="num-btn" onclick="updateCartItem(${cart[i].id}, ${i}, 1)"> + </button>
                             ${cart[i].quantity}
                             <button class="num-btn" onclick="updateCartItem(${cart[i].id}, ${i}, -1)"> - </button>
                         </div>
-                        <div class="item-total">${totalItemPrice}</div>
+                        <div class="item-total">총 ${totalItemPrice}(원)</div>
                         <div class="item-buttons">
                             <button class="delete-btn" onclick="removeFromCart(${i})">삭제</button>
                         </div>
