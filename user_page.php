@@ -117,7 +117,8 @@
                                     echo "<p>No profile picture available.</p>";
                                 }
                                 
-                                echo "<p><strong>Profile Info:</strong> " . $profileRow['PROFILE_INFO'] . "</p>";
+                                echo "<p><strong>Profile Info:</strong></p>";
+                                echo "<p>" . $profileRow['PROFILE_INFO'] . "</p>";
                                 
                             } else {
                                 echo "Profile not found.";

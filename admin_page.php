@@ -70,7 +70,9 @@
                         } else {
                             echo "<p>No profile picture available.</p>";
                         }
-                        echo "<p><strong>Profile Info:</strong> " . $rowProfile['PROFILE_INFO'] . "</p>";
+                        
+                        echo "<p><strong>Profile Info:</strong></p>";
+                        echo "<p>" . $rowProfile['PROFILE_INFO'] . "</p>";
     
                         oci_free_statement($stmtProfile);
                     } else {
