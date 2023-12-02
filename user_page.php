@@ -61,77 +61,89 @@
 </head>
 <body>
     <div class="container">
-        <form action="index.php">            
-            <input type="submit" value="로그아웃" class='button'>                
-        </form> 
-        <header>Welcome to the Customer Page</header>  
-        <div class="item_name">    
-            <?php
-                // DB 정보 불러오기
-                include 'db_info.php';
+        <?php
+            // DB 정보 불러오기
+            include 'db_info.php';
 
-                // 고객 정보를 데이터베이스에서 가져오는 쿼리
-                $customer_id = $_GET['customer_id'];
-                $store_id = $_GET['store_id'];
-                $sql = "SELECT * FROM CUSTOMER WHERE customer_id = :customer_id";
-                $stmt = oci_parse($conn, $sql);
-                oci_bind_by_name($stmt, ':customer_id', $customer_id);
-                oci_execute($stmt);
+            // 고객 정보를 데이터베이스에서 가져오는 쿼리
+            $customer_id = $_GET['customer_id'];
+            $store_id = $_GET['store_id'];
+            $sql = "SELECT CUSTOMER.*, STORE.store_name, STORE.classification
+                    FROM CUSTOMER, STORE
+                    WHERE CUSTOMER.store_id = STORE.store_id
+                    AND CUSTOMER.customer_id = :customer_id";
+            $stmt = oci_parse($conn, $sql);
+            oci_bind_by_name($stmt, ':customer_id', $customer_id);
+            oci_execute($stmt);
 
-                $customerRow = oci_fetch_assoc($stmt);
+            $customerRow = oci_fetch_assoc($stmt);
 
-                if ($customerRow) {
-                    // 고객 정보를 출력
-                    echo "<p><strong>Customer Name:</strong> " . $customerRow['CUSTOMER_NAME'] . "</p>";
-
-                    // 날짜 포맷팅
-                    $customerBirthdate = date_create_from_format("d-M-y", $customerRow['CUSTOMER_BIRTH']);
-                    echo "<p><strong>Date of Birth:</strong> " . $customerBirthdate->format('Y년 m월 d일') . "</p>";
-                    
-                    echo "<p><strong>Gender:</strong> " . $customerRow['CUSTOMER_SEX'] . "</p>";
-                    echo "<p><strong>Phone Number:</strong> " . $customerRow['CUSTOMER_PHONE'] . "</p>";
-                    echo "<p><strong>Point:</strong> " . $customerRow['CUSTOMER_POINT'] . " 포인트</p>";
-            ?>
-        </div>
-        <div class="item">
-            <?php
+            if ($customerRow) {
                 // 고객의 프로필 정보를 데이터베이스에서 가져오는 쿼리
                 $profile_id = $customerRow['PROFILE_ID'];
-
-                if (isset($profile_id)) {
-                    $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
-                    $stmtProfile = oci_parse($conn, $sqlProfile);
-                    oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
-                    oci_execute($stmtProfile);
-
-                    $profileRow = oci_fetch_assoc($stmtProfile);
-
-                    if ($profileRow) {
-                        // 고객의 프로필 정보를 출력
-                        echo "<p><strong>Profile ID:</strong> " . $profileRow['PROFILE_ID'] . "</p>";
+        ?>
+        <a href='index.php' class='button'>로그아웃</a>
+        <a href="edit_profile.php?profile_id=<?php echo $profile_id; ?>&store_id=<?php echo $store_id; ?>" class='button'>프로필 수정</a>
+        <header style="margin-left: 10px">Welcome to the Customer Page</header>
+        <div class="store_container">
+            <div class="item_store">
+                <?php
+                    // 가게 정보를 출력
+                    echo "<p style='font-size: 50px;'><strong>" . $customerRow['STORE_NAME'] . "</strong></p>";
+                    echo "<p style='font-size: 20px; color: #CCC;'>" . $customerRow['CLASSIFICATION'] . "</p>";
+                ?>
+            </div>
+        </div>
+        <div class="info_container">
+            <div class="item_profile">
+                <?php
+                        if (isset($profile_id)) {
+                            $sqlProfile = "SELECT * FROM PROFILE WHERE profile_id = :profile_id";
+                            $stmtProfile = oci_parse($conn, $sqlProfile);
+                            oci_bind_by_name($stmtProfile, ':profile_id', $profile_id);
+                            oci_execute($stmtProfile);
+        
+                            $profileRow = oci_fetch_assoc($stmtProfile);
+        
+                            if ($profileRow) {
+                                // 고객의 프로필 정보를 출력
+                                echo "<p><strong>Profile ID:</strong> " . $profileRow['PROFILE_ID'] . "</p>";
+                                
+                                // 프로필 사진을 출력
+                                if (!empty($profileRow['PROFILE_PIC'])) {
+                                    $profile_pic = base64_encode($profileRow['PROFILE_PIC']->load());
+                                    echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
+                                } else {
+                                    echo "<p>No profile picture available.</p>";
+                                }
+                                
+                                echo "<p><strong>Profile Info:</strong> " . $profileRow['PROFILE_INFO'] . "</p>";
+                                
+                            } else {
+                                echo "Profile not found.";
+                            }
+        
+                            oci_free_statement($stmtProfile);
+                ?>
+            </div>
+            <div class="item_user">
+                <?php
+                        // 고객 정보를 출력
+                        echo "<p><strong>Customer Name:</strong> " . $customerRow['CUSTOMER_NAME'] . "</p>";
+    
+                        // 날짜 포맷팅
+                        $customerBirthdate = date_create_from_format("d-M-y", $customerRow['CUSTOMER_BIRTH']);
+                        echo "<p><strong>Date of Birth:</strong> " . $customerBirthdate->format('Y년 m월 d일') . "</p>";
                         
-                        // 프로필 사진을 출력
-                        if (!empty($profileRow['PROFILE_PIC'])) {
-                            $profile_pic = base64_encode($profileRow['PROFILE_PIC']->load());
-                            echo "<img src='data:image/png;base64, $profile_pic' alt='Profile Picture' class='profile_pic_style'>";
+                        echo "<p><strong>Gender:</strong> " . $customerRow['CUSTOMER_SEX'] . "</p>";
+                        echo "<p><strong>Phone Number:</strong> " . $customerRow['CUSTOMER_PHONE'] . "</p>";
+                        echo "<p><strong>Point:</strong> " . $customerRow['CUSTOMER_POINT'] . " 포인트</p>";
+                        
                         } else {
-                            echo "<p>No profile picture available.</p>";
+                            echo "Profile ID is not set.";
                         }
-                        
-                        echo "<p><strong>Profile Info:</strong> " . $profileRow['PROFILE_INFO'] . "</p>";
-
-                        // 프로필 수정 버튼
-                        echo "<a href='edit_profile.php?profile_id=$profile_id&store_id=$store_id&customer_id=$customer_id' class='button_edit'>프로필 수정</a>";
-                        
-                    } else {
-                        echo "Profile not found.";
-                    }
-
-                    oci_free_statement($stmtProfile);
-                } else {
-                    echo "Profile ID is not set.";
-                }
-            ?>
+                ?>
+            </div>
         </div>
         <br>
         <div class="item_receipt">

@@ -17,6 +17,7 @@ body {
 .container {
   position: relative;
   max-width: 1050px;
+  min-width: 900px;
   height: auto;
   width: 100%;
   background: #fff;
@@ -29,20 +30,55 @@ body {
   color: #333;  
   font-weight: bolder;
 }
-.item{ 
-  float: left;
+.store_container {
+  display: flex;
+  position: relative;
+  height: auto;
+  background: #fff;
+  border-radius: 8px;
+  text-align: left;
+}
+.store_container * {
+  left: -33%;
+}
+
+.info_container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  margin: 25px;
+  border-radius: 8px;
+}
+
+.item_store {
+  position: relative;  
+  margin: 0 auto;
+  width: 25%;
   background: #fff;
   padding: 25px;
+  padding-bottom: 0;
   border-radius: 8px;  
 }
-.item_name{  
+.item_profile {
   display: inline-block;
+  width: 25%;
   padding: 25px;
+  padding-top: 0;
   border-radius: 8px;
   background: #fff;
 }
+.item_admin {
+  float: left;
+  width: 50%;
+  background: #fff;
+  padding: 25px;
+  padding-top: 0;
+  border-radius: 8px;  
+}
 
-.item_btn{
+.item_btn {
   position: relative;  
   margin: 0 auto;
   background: #fff;
@@ -50,15 +86,7 @@ body {
   border-radius: 8px;  
 }
 
-.item_product{
-  position: relative;  
-  margin: 0 auto;
-  background: #fff;
-  padding: 25px;
-  border-radius: 8px;  
-}
-
-.item_input{
+.item_input {
   display: flex;  
   font-weight: bolder;
   height: 30px;
@@ -72,19 +100,19 @@ body {
   width: 20%;
 }
 
-.button { 
-  float: right;
+.button {
+  float: right;  
   width: 150px;
   padding: 0;
-  margin: 10px 20px 10px 0;
+  margin: -10px 5px 10px 0;
   font-weight: 600;
   text-align: center;
   line-height: 50px;
   color: #FFF;
+  border: 0;
   border-radius: 5px;
   transition: all 0.2s ;
   background: #4d59db;
-  border: none;
   text-decoration-line:none;
 }
 
@@ -104,23 +132,6 @@ body {
   background: #4d59db;
   border: none;
   height: 35px;
-  text-decoration-line:none;
-}
-
-.button_edit{
-  display: block;
-  position: relative;  
-  right: -5px;
-  padding: 5;
-  margin: 10px 20px 10px 0;
-  font-weight: normal;
-  font-size: small;
-  text-align: center;
-  line-height: 40px;
-  color: #FFF;
-  border-radius: 5px;
-  transition: all 0.2s ;
-  background: #4d59db;
   text-decoration-line:none;
 }
 

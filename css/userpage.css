@@ -16,6 +16,7 @@ body {
 }
 .container {
   position: relative;
+  min-width: 800px;
   max-width: 1050px;
   height: auto;
   background: #fff;
@@ -24,26 +25,61 @@ body {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
-.item{ 
-  float: left;
+.store_container {
+  display: flex;
+  position: relative;
+  height: auto;
   background: #fff;
-  padding: 20px;
-  border-radius: 8px;  
+  border-radius: 8px;
+  text-align: left;
 }
-.item_receipt{ 
-  float: left;
+.store_container * {
+  left: -36%;
+}
+
+.info_container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: auto;
   background: #fff;
-  padding: 20px 20px 20px 20px; 
-  border-radius: 8px;  
+  margin: 25px;
+  margin-top: 0;
+  border-radius: 8px;
 }
-.item_name{  
-  display: inline-block;
+
+.item_store {
+  position: relative;  
+  margin: 0 auto;
+  width: 25%;
+  background: #fff;
   padding: 25px;
+  padding-bottom: 0;
+  border-radius: 8px;  
+}
+
+.item_profile {
+  margin-top: 25px;
+  width: 25%;
+  display: inline-block;
   border-radius: 8px;
   background: #fff;
 }
+.item_user {
+  margin-top: 25px;
+  width: 75%;
+  background: #fff;
+  border-radius: 8px;  
+}
+.item_receipt {
+  width: 100%;
+  float: left;
+  background: #fff;
+  padding: 0 20px 0 20px; 
+  border-radius: 8px;  
+}
 
-.item_btn{
+.item_btn {
   position: relative;  
   margin: 0 auto;
   background: #fff;
@@ -61,29 +97,12 @@ body {
   float: right;  
   width: 150px;
   padding: 0;
-  margin: 10px 20px 10px 0;
+  margin: -10px 15px 10px 0;
   font-weight: 600;
   text-align: center;
   line-height: 50px;
   color: #FFF;
   border: 0;
-  border-radius: 5px;
-  transition: all 0.2s ;
-  background: #4d59db;
-  text-decoration-line:none;
-}
-
-.button_edit{
-  display: block;
-  position: relative;  
-  right: -5px;
-  padding: 5;
-  margin: 10px 20px 10px 0;
-  font-weight: normal;
-  font-size: small;
-  text-align: center;
-  line-height: 40px;
-  color: #FFF;
   border-radius: 5px;
   transition: all 0.2s ;
   background: #4d59db;
