@@ -155,23 +155,24 @@
                     echo "<th>상세 내역 보기</th>";
                     echo "</tr>";
                     
-                    if (oci_fetch($stmtReceipt)) {
+                    $rowReceipt = oci_fetch_assoc($stmtReceipt);
+                    if ($rowReceipt) {
     
-                        while ($receiptRow = oci_fetch_assoc($stmtReceipt)) {
+                        do {
                             echo "<tr >";
-                            echo "<td>" . $receiptRow['RECEIPT_ID'] . "</td>";
-                            echo "<td>" . $receiptRow['RECEIPT_PRICE'] . "</td>";
-                            echo "<td>" . $receiptRow['PAYMENT_METHOD'] . "</td>";
+                            echo "<td>" . $rowReceipt['RECEIPT_ID'] . "</td>";
+                            echo "<td>" . $rowReceipt['RECEIPT_PRICE'] . "</td>";
+                            echo "<td>" . $rowReceipt['PAYMENT_METHOD'] . "</td>";
                             
                             // 날짜 포맷팅
-                            $purchaseDate = date_create_from_format("d-M-y h.i.s A", $receiptRow['RECEIPT_TIME']);
+                            $purchaseDate = date_create_from_format("d-M-y h.i.s A", $rowReceipt['RECEIPT_TIME']);
                             echo "<td>" . $purchaseDate->format('Y년 m월 d일 H시 i분 s초') . "</td>";
     
                             // 상세 내역 보기 링크
-                            echo "<td><a class='order-detail-link' href='get_order_detail.php?receipt_id=" . $receiptRow['RECEIPT_ID'] . "'>자세히</a></td>";
+                            echo "<td><a class='order-detail-link' href='get_order_detail.php?receipt_id=" . $rowReceipt['RECEIPT_ID'] . "'>자세히</a></td>";
     
                             echo "</tr>";
-                        }
+                        } while ($rowReceipt = oci_fetch_assoc($stmtReceipt));
     
                         echo "</table>";
 

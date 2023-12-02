@@ -100,14 +100,14 @@
                 echo "<tr><th>상품 ID</th><th>상품명</th><th>상품 종류</th><th>가격(원)</th><th>재고</th><th>수정</th></tr>";
 
                 // 해당 STORE에 속한 PRODUCT들을 조회하는 쿼리
-                $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id ORDER BY PRODUCT_ID ASC";
+                $sqlProduct = "SELECT * FROM PRODUCT WHERE store_id = :store_id";
                 $stmtProduct = oci_parse($conn, $sqlProduct);
                 oci_bind_by_name($stmtProduct, ':store_id', $store_id);
                 oci_execute($stmtProduct);
 
-                if (oci_fetch($stmtProduct)) {
-
-                    while ($rowProduct = oci_fetch_assoc($stmtProduct)) {
+                $rowProduct = oci_fetch_assoc($stmtProduct);
+                if ($rowProduct) {
+                    do {
                         echo "<tr>";
                         echo "<td>" . $rowProduct['PRODUCT_ID'] . "</td>";
                         echo "<td>" . $rowProduct['PRODUCT_NAME'] . "</td>";
@@ -116,10 +116,9 @@
                         echo "<td>" . $rowProduct['PRODUCT_STOCK'] . "</td>";
                         echo "<td><a href='edit_product.php?product_id=" . $rowProduct['PRODUCT_ID'] . "&store_id=$store_id'>Edit</a></td>";
                         echo "</tr>";
-                    }
-    
-                    echo "</table>";
+                    } while ($rowProduct = oci_fetch_assoc($stmtProduct));
 
+                    echo "</table>";
                 } else {
                     echo "<table>";
                     echo "<tr class='receipt-item'>";
