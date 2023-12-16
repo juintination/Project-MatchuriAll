@@ -27,7 +27,7 @@ if ($user_type === "admin") {
         header("Location: admin_page.php?store_id=$store_id");
     } else {
         // 관리자 정보가 일치하지 않는 경우
-        echo "<script>alert('Admin login failed. Please try again.'); window.location = 'signin.php';</script>";
+        echo "<script>alert('관리자 로그인에 실패했습니다. 다시 시도하십시오.'); window.location = 'signin.php';</script>";
     }
     oci_free_statement($stmt);
 } else if ($user_type === "user") {
@@ -50,7 +50,7 @@ if ($user_type === "admin") {
         header("Location: user_page.php?store_id=$store_id&customer_id=$customer_id");
     } else {
         // 일반 회원 정보가 일치하지 않는 경우
-        echo "<script>alert('Customer login failed. Please try again.'); window.location = 'signin.php';</script>";
+        echo "<script>alert('일반 회원 로그인에 실패했습니다. 다시 시도하십시오.'); window.location = 'signin.php';</script>";
     }
     oci_free_statement($stmt);
 }

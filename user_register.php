@@ -41,7 +41,9 @@ if (oci_fetch_assoc($emailCheckResult)) {
         $defaultProfilePic = file_get_contents($defaultProfilePicPath);
     
         // PROFILE 테이블에 데이터 삽입
-        $insertProfileQuery = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (EMPTY_BLOB(), NULL, 0) RETURNING profile_pic, profile_id INTO :blobData, :profileId";
+        $insertProfileQuery = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin)
+                                VALUES (EMPTY_BLOB(), NULL, 0) 
+                                RETURNING profile_pic, profile_id INTO :blobData, :profileId";
         $profileStmt = oci_parse($conn, $insertProfileQuery);
     
         $blobDescriptor = oci_new_descriptor($conn, OCI_D_LOB);
@@ -61,7 +63,7 @@ if (oci_fetch_assoc($emailCheckResult)) {
     
         // INSERT 쿼리 실행 (회원 정보)
         $sqlCustomer = "INSERT INTO CUSTOMER (customer_name, customer_birth, customer_sex, customer_phone, customer_email, customer_pw, customer_point, store_id, profile_id)
-        VALUES (:customerName, TO_DATE(:customerBirth, 'YYYY-MM-DD'), :customerSex, :customerPhone, :customerEmail, :customerPw, 0, :storeID, :profileId)";
+                        VALUES (:customerName, TO_DATE(:customerBirth, 'YYYY-MM-DD'), :customerSex, :customerPhone, :customerEmail, :customerPw, 0, :storeID, :profileId)";
     
         $customerStmt = oci_parse($conn, $sqlCustomer);
         oci_bind_by_name($customerStmt, ':customerName', $customerName);
