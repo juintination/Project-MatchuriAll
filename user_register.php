@@ -68,6 +68,11 @@ if (oci_fetch_assoc($emailCheckResult)) {
         $customerStmt = oci_parse($conn, $sqlCustomer);
         oci_bind_by_name($customerStmt, ':customerName', $customerName);
         oci_bind_by_name($customerStmt, ':customerBirth', $customerBirth);
+        if ($customerSex == "남자") {
+            $customerSex = "Male";
+        } else if ($customerSex == "여자") {
+            $customerSex = "Female";
+        }
         oci_bind_by_name($customerStmt, ':customerSex', $customerSex);
         oci_bind_by_name($customerStmt, ':customerPhone', $customerPhone);
         oci_bind_by_name($customerStmt, ':customerEmail', $customerEmail);
