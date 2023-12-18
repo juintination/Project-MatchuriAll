@@ -301,7 +301,8 @@
                                     echo "<script>alert('프로필 사진이 기본 이미지로 변경되었습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
                                 } else {
                                     $error = error_get_last();
-                                    echo "<script>alert('프로필 사진을 기본 이미지로 변경하는 중에 오류가 발생했습니다. Error: " . addslashes($error['message']) . "'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
+                                    echo "<script>alert('프로필 사진을 기본 이미지로 변경하는 중에 오류가 발생했습니다. Error: " . addslashes($error['message']) . "');
+                                    window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
                                 }
 
                             } else if (isset($_POST['submit'])) {
@@ -329,7 +330,9 @@
                                     // 업로드한 파일을 목적지로 이동
                                     if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $new_profile_pic)) {
                                         // 데이터베이스에서 프로필 사진 업데이트
-                                        $update_pic_query = "UPDATE PROFILE SET profile_pic = EMPTY_BLOB() WHERE profile_id = :profile_id RETURNING profile_pic INTO :blobData";
+                                        $update_pic_query = "UPDATE PROFILE SET profile_pic = EMPTY_BLOB()
+                                                                WHERE profile_id = :profile_id
+                                                                RETURNING profile_pic INTO :blobData";
                                         $stmt_update_pic = oci_parse($conn, $update_pic_query);
                                         oci_bind_by_name($stmt_update_pic, ':profile_id', $profile_id);
                                         $blobDescriptor = oci_new_descriptor($conn, OCI_D_LOB);

@@ -37,7 +37,9 @@ if (oci_fetch_assoc($emailCheckResult)) {
         $defaultProfilePic = file_get_contents($defaultProfilePicPath);
 
         // PROFILE 테이블에 데이터 삽입
-        $insertProfileQuery = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin) VALUES (EMPTY_BLOB(), NULL, 1) RETURNING profile_pic, profile_id INTO :blobData, :profileId";
+        $insertProfileQuery = "INSERT INTO PROFILE (profile_pic, profile_info, is_admin)
+                                VALUES (EMPTY_BLOB(), NULL, 1)
+                                RETURNING profile_pic, profile_id INTO :blobData, :profileId";
         $profileStmt = oci_parse($conn, $insertProfileQuery);
 
         $blobDescriptor = oci_new_descriptor($conn, OCI_D_LOB);
@@ -93,7 +95,6 @@ if (oci_fetch_assoc($emailCheckResult)) {
         oci_bind_by_name($stmt, ':adminEmail', $adminEmail);
         oci_execute($stmt);
 
-        // 커밋
         oci_commit($conn);
 
         echo "<script>alert('관리자와 가게 정보가 성공적으로 등록되었습니다.'); window.location = 'index.php';</script>";
