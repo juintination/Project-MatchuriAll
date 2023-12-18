@@ -8,6 +8,16 @@ $customerName = isset($_POST['customerName']) ? $_POST['customerName'] : null;
 $customerBirth = isset($_POST['customerBirth']) ? $_POST['customerBirth'] : null;
 $customerSex = isset($_POST['customerSex']) ? $_POST['customerSex'] : null;
 $customerPhone = isset($_POST['customerPhone']) ? $_POST['customerPhone'] : null;
+// 정규 표현식을 사용하여 형식 변환
+if ($customerPhone !== null) {
+    // 숫자 이외의 문자는 제거
+    $customerPhone = preg_replace("/[^0-9]/", "", $customerPhone);
+
+    // 010-1234-5678 형식으로 변환
+    if (strlen($customerPhone) === 11) {
+        $customerPhone = substr($customerPhone, 0, 3) . '-' . substr($customerPhone, 3, 4) . '-' . substr($customerPhone, 7);
+    }
+}
 $customerEmail = isset($_POST['customerEmail']) ? $_POST['customerEmail'] : null;
 $customerPw = isset($_POST['customerPw']) ? $_POST['customerPw'] : null;
 

@@ -10,6 +10,16 @@ error_reporting(E_ALL);
 $adminName = isset($_POST['adminName']) ? $_POST['adminName'] : null;
 $adminBirth = isset($_POST['adminBirth']) ? $_POST['adminBirth'] : null;
 $adminPhone = isset($_POST['adminPhone']) ? $_POST['adminPhone'] : null;
+// 정규 표현식을 사용하여 형식 변환
+if ($adminPhone !== null) {
+    // 숫자 이외의 문자는 제거
+    $adminPhone = preg_replace("/[^0-9]/", "", $adminPhone);
+
+    // 010-1234-5678 형식으로 변환
+    if (strlen($adminPhone) === 11) {
+        $adminPhone = substr($adminPhone, 0, 3) . '-' . substr($adminPhone, 3, 4) . '-' . substr($adminPhone, 7);
+    }
+}
 $adminEmail = isset($_POST['adminEmail']) ? $_POST['adminEmail'] : null;
 $adminPw = isset($_POST['adminPw']) ? $_POST['adminPw'] : null;
 

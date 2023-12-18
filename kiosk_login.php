@@ -81,6 +81,18 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $customer_phone = $_POST['customer_phone'];
+
+        // 정규 표현식을 사용하여 형식 변환
+        if ($customer_phone !== null) {
+            // 숫자 이외의 문자는 제거
+            $customer_phone = preg_replace("/[^0-9]/", "", $customer_phone);
+
+            // 010-1234-5678 형식으로 변환
+            if (strlen($customer_phone) === 11) {
+                $customer_phone = substr($customer_phone, 0, 3) . '-' . substr($customer_phone, 3, 4) . '-' . substr($customer_phone, 7);
+            }
+        }
+
         $store_id = $_GET['store_id'];
 
         $sql = "SELECT customer_id FROM CUSTOMER WHERE customer_phone = :customer_phone AND store_id = :store_id";
