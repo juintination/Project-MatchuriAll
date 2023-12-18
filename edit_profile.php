@@ -236,7 +236,7 @@
                                                 </a>
                                             </div>
                                             <div class='px-xl-3'>
-                                                <button class='btn btn-block btn-secondary' onclick='confirmDelete()'>
+                                                <button class='btn btn-block btn-secondary' onclick='confirmDelete()' name='delete_user'>
                                                     <i class='fa fa-sign-out'></i>
                                                     <span>회원 탈퇴</span>
                                                 </button>
