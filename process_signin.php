@@ -10,10 +10,10 @@ $password = $_POST['password'];
 
 if ($user_type === "admin") {
     // 관리자로 로그인
-    $sql = "SELECT ADMIN.*, STORE.store_name 
-            FROM ADMIN
-            JOIN STORE ON ADMIN.admin_id = STORE.admin_id
-            WHERE ADMIN.admin_email = :email AND ADMIN.admin_pw = :password AND STORE.store_id = :store_id";
+    $sql = "SELECT ADMIN.*, STORE.store_name
+            FROM ADMIN, STORE
+            WHERE ADMIN.admin_id = STORE.admin_id
+            AND ADMIN.admin_email = :email AND ADMIN.admin_pw = :password AND STORE.store_id = :store_id";
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ':email', $email);
     oci_bind_by_name($stmt, ':password', $password);
