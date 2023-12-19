@@ -5,6 +5,11 @@
     <title>edit profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
+        function previewImageAndCheckSize(event) {
+            previewImage(event);
+            checkFileSize();
+        }
+
         function checkFileSize() {
             var input = document.getElementById('profile_pic');
             var file = input.files[0];
@@ -166,7 +171,7 @@
                                     <span class='badge badge-secondary'><p class='mb-0''>Profile ID: " . oci_result($stmt, 'PROFILE_ID') . "</p></span><br>
                                 </div>
                                 <label for='profile_pic'><div class='btn-upload'><i class='fa fa-fw fa-camera'></i>프로필 사진 수정</div></label>
-                                <input type='file' name='profile_pic' id='profile_pic' accept='.png, .jpg' onchange='previewImage(event)' onchange='checkFileSize()'>
+                                <input type='file' name='profile_pic' id='profile_pic' accept='.png, .jpg' onchange='previewImageAndCheckSize(event)'>
                                 <input type='submit' name='default_pic' class='btn-upload' value='기본 이미지로 변경'>
                             </div>
                         </div>";
@@ -315,13 +320,6 @@
                                     $uploadFolder = 'uploads';
                                     if (!is_dir($uploadFolder)) {
                                         mkdir($uploadFolder, 0777, true);
-                                    }
-
-                                    // 최대 파일 크기 (2MB)
-                                    $maxFileSize = 2 * 1024 * 1024;
-                                    if ($_FILES['profile_pic']['size'] > $maxFileSize) {
-                                        echo "<script>alert('이미지 크기는 2MB를 초과할 수 없습니다.'); window.location = 'edit_profile.php?profile_id=$profile_id&store_id=$store_id';</script>";
-                                        exit;
                                     }
 
                                     // 고유한 파일 이름 생성 (덮어쓰기 방지)
