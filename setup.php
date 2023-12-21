@@ -134,7 +134,7 @@ $productQuery = "CREATE TABLE PRODUCT (
     product_price NUMBER,
     product_stock NUMBER,
     store_id NUMBER NOT NULL,
-    FOREIGN KEY (store_id) REFERENCES STORE(store_id)
+    FOREIGN KEY (store_id) REFERENCES STORE(store_id) ON DELETE CASCADE
 )";
 
 try {
