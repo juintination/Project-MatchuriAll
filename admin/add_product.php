@@ -1,6 +1,6 @@
 <?php
 // DB 정보 불러오기
-include 'db_info.php';
+include '../db_info.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // POST 데이터 가져오기

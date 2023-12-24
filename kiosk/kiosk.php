@@ -234,7 +234,7 @@
     <div class="menu">
         <?php
         // DB 정보 불러오기
-        include 'db_info.php';
+        include '../db_info.php';
 
         // GET 파라미터로 전달된 store_id 확인
         if (isset($_GET['store_id']) && isset($_GET['customer_id'])) {

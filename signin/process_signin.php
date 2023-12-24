@@ -1,6 +1,6 @@
 <?php
 // DB 정보 불러오기
-include 'db_info.php';
+include '../db_info.php';
 
 // POST 데이터 가져오기
 $store_id = $_POST['store_id'];
@@ -24,7 +24,7 @@ if ($user_type === "admin") {
 
     if ($row) {
         // 관리자 정보가 일치하는 경우
-        header("Location: admin_page.php?store_id=$store_id");
+        header("Location: ../admin/admin_page.php?store_id=$store_id");
     } else {
         // 관리자 정보가 일치하지 않는 경우
         echo "<script>alert('관리자 로그인에 실패했습니다. 다시 시도하십시오.'); window.location = 'signin.php';</script>";
@@ -47,7 +47,7 @@ if ($user_type === "admin") {
         // 일반 회원 정보가 일치하는 경우
         $store_id = $row['STORE_ID'];
         $customer_id = $row['CUSTOMER_ID'];
-        header("Location: user_page.php?store_id=$store_id&customer_id=$customer_id");
+        header("Location: ../user/user_page.php?store_id=$store_id&customer_id=$customer_id");
     } else {
         // 일반 회원 정보가 일치하지 않는 경우
         echo "<script>alert('일반 회원 로그인에 실패했습니다. 다시 시도하십시오.'); window.location = 'signin.php';</script>";

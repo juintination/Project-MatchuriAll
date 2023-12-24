@@ -3,7 +3,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // DB 정보 불러오기
-    include 'db_info.php';
+    include '../db_info.php';
 
     // 현재 시간을 포함한 timestamp 생성
     date_default_timezone_set('Asia/Seoul');

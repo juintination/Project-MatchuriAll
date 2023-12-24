@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="css/adminpage.css">
+    <link rel="stylesheet" href="../css/adminpage.css">
     <title>Admin Page</title>
     <style>
         /* 프로필 사진 이미지 스타일 */
@@ -17,7 +17,7 @@
     <div class="container">
         <?php
             // DB 정보 불러오기
-            include 'db_info.php';
+            include '../db_info.php';
 
             // 관리자 정보를 데이터베이스에서 가져오는 쿼리
             $store_id = $_GET['store_id'];
@@ -36,9 +36,9 @@
                 // 관리자의 프로필 정보를 데이터베이스에서 가져오는 쿼리
                 $profile_id = $adminRow['PROFILE_ID'];
         ?>
-        <a href='index.php' class='button'>로그아웃</a>
-        <a href="edit_profile.php?profile_id=<?php echo $profile_id; ?>&store_id=<?php echo $store_id; ?>" class='button'>프로필 수정</a>
-        <a href="kiosk_login.php?store_id=<?php echo $store_id; ?>" class="button">키오스크 들어가기</a>
+        <a href='../index.php' class='button'>로그아웃</a>
+        <a href="../profile/edit_profile.php?profile_id=<?php echo $profile_id; ?>&store_id=<?php echo $store_id; ?>" class='button'>프로필 수정</a>
+        <a href="../kiosk/kiosk_login.php?store_id=<?php echo $store_id; ?>" class="button">키오스크 들어가기</a>
         <header>Welcome to the Admin Page</header>
         <div class="store_container">
             <div class="item_store">

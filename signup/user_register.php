@@ -1,6 +1,6 @@
 <?php
 // DB 정보 불러오기
-include 'db_info.php';
+include '../db_info.php';
 
 // POST 데이터 가져오기
 $storeID = isset($_POST['storeID']) ? $_POST['storeID'] : null;
@@ -47,7 +47,7 @@ if (oci_fetch_assoc($emailCheckResult)) {
         echo "<script>alert('이미 등록된 핸드폰 번호입니다. 다른 번호를 사용해주세요.'); window.history.back();</script>";
     } else {
         // 새로운 PROFILE 생성
-        $defaultProfilePicPath = 'uploads/profile_default.png';
+        $defaultProfilePicPath = '../profile/uploads/profile_default.png';
         $defaultProfilePic = file_get_contents($defaultProfilePicPath);
     
         // PROFILE 테이블에 데이터 삽입
@@ -91,7 +91,7 @@ if (oci_fetch_assoc($emailCheckResult)) {
         oci_bind_by_name($customerStmt, ':profileId', $profileId);
     
         if (oci_execute($customerStmt, OCI_COMMIT_ON_SUCCESS)) {
-            echo "<script>alert('회원가입이 성공적으로 완료되었습니다.'); window.location = 'index.php';</script>";
+            echo "<script>alert('회원가입이 성공적으로 완료되었습니다.'); window.location = '../index.php';</script>";
         } else {
             $err = oci_error($customerStmt);
             echo "회원가입 오류: " . $err['message'];

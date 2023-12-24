@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>회원가입</title>
     <!---Custom CSS File--->
-    <link rel="stylesheet" href="css/accountstyle.css" />
+    <link rel="stylesheet" href="../css/accountstyle.css" />
   </head>
   <body>
     <section class="container">

@@ -65,7 +65,7 @@
 <div class='container'>
     <?php
     // DB 정보 불러오기
-    include 'db_info.php';
+    include '../db_info.php';
 
     // 구매 번호 가져오기
     $receipt_id = $_GET['receipt_id'];

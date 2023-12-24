@@ -9,7 +9,7 @@
     <h1>수익 상세 정보</h1>
         <?php
         // DB 정보 불러오기
-        include 'db_info.php';
+        include '../db_info.php';
 
         // URL에서 store_id 가져오기
         $store_id = $_GET['store_id'];

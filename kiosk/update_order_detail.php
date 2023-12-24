@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($data && isset($data['products']) && is_array($data['products'])) {
         // DB 정보 불러오기
-        include 'db_info.php';
+        include '../db_info.php';
 
         // RECEIPT 테이블에서 가장 최근에 삽입된 receipt_id 가져오기
         $getLastReceiptIdQuery = "SELECT MAX(receipt_id) AS max_receipt_id FROM RECEIPT";

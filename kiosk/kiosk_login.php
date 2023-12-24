@@ -65,7 +65,7 @@
 </head>
 <body>
     <?php
-    include 'db_info.php';
+    include '../db_info.php';
 
     // Retrieve store name based on store_id
     $store_id = $_GET['store_id'];

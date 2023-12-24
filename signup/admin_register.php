@@ -1,6 +1,6 @@
 <?php
 // DB 정보 불러오기
-include 'db_info.php';
+include '../db_info.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -43,7 +43,7 @@ if (oci_fetch_assoc($emailCheckResult)) {
 
     try {
         // 새로운 PROFILE 생성
-        $defaultProfilePicPath = 'uploads/profile_default.png';
+        $defaultProfilePicPath = '../profile/uploads/profile_default.png';
         $defaultProfilePic = file_get_contents($defaultProfilePicPath);
 
         // PROFILE 테이블에 데이터 삽입
@@ -107,7 +107,7 @@ if (oci_fetch_assoc($emailCheckResult)) {
 
         oci_commit($conn);
 
-        echo "<script>alert('관리자와 가게 정보가 성공적으로 등록되었습니다.'); window.location = 'index.php';</script>";
+        echo "<script>alert('관리자와 가게 정보가 성공적으로 등록되었습니다.'); window.location = '../index.php';</script>";
     } catch (Exception $e) {
         // 롤백
         oci_rollback($conn);

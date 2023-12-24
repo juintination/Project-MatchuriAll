@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <!-- Custom CSS File -->
-    <link rel="stylesheet" href="css/accountstyle.css" />
+    <link rel="stylesheet" href="../css/accountstyle.css" />
     <title>Login 페이지</title>
   </head>
   <body>
@@ -19,7 +19,7 @@
           <option value="" disabled selected>Select the store</option>
           <?php
           // DB 정보 불러오기
-          include 'db_info.php';
+          include '../db_info.php';
 
           // STORE 테이블에서 가게 목록을 가져오기
           $sql = "SELECT store_id, store_name FROM STORE ORDER BY store_id ASC";

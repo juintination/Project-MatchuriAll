@@ -64,7 +64,7 @@
 
     <?php
     // DB 정보 불러오기
-    include 'db_info.php';
+    include '../db_info.php';
 
     $store_id = $_GET['store_id'];
 

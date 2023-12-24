@@ -126,7 +126,7 @@
         <div class="row flex-lg-nowrap">
             <?php
             // DB 정보 불러오기
-            include 'db_info.php';
+            include '../db_info.php';
 
             if (isset($_GET['profile_id'])) {
                 $profile_id = $_GET['profile_id'];
@@ -215,20 +215,20 @@
             
                                 if ($rowCustomerId) {
                                     $customer_id = $rowCustomerId['CUSTOMER_ID'];
-                                    $redirect_link = "user_page.php?store_id=$store_id&customer_id=$customer_id";
+                                    $redirect_link = "../user/user_page.php?store_id=$store_id&customer_id=$customer_id";
                                 } else {
-                                    echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = 'index.php';</script>";
+                                    echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = '../index.php';</script>";
                                     exit;
                                 }
             
                                 oci_free_statement($stmtCustomerId);
                             } else if ($rowIsAdmin['IS_ADMIN'] == 1) {
                                 // 관리자인 경우
-                                $redirect_link = "admin_page.php?store_id=$store_id";
+                                $redirect_link = "../admin/admin_page.php?store_id=$store_id";
                             }
                         } else {
                             // 프로필 정보를 찾을 수 없는 경우
-                            $redirect_link = "index.php";
+                            $redirect_link = "../index.php";
                         }
 
                         // 수정 완료 및 회원 탈퇴 버튼
@@ -425,9 +425,9 @@
                                     oci_execute($stmt_delete_profile);
                                     oci_free_statement($stmt_delete_profile);
 
-                                    echo "<script>alert('회원 탈퇴가 성공적으로 완료되었습니다.'); window.location = 'index.php';</script>";
+                                    echo "<script>alert('회원 탈퇴가 성공적으로 완료되었습니다.'); window.location = '../index.php';</script>";
                                 } else {
-                                    echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = 'index.php';</script>";
+                                    echo "<script>alert('사용자 정보를 찾을 수 없습니다.'); window.location = '../index.php';</script>";
                                 }
                                 oci_free_statement($stmt_customer_id);
                             }

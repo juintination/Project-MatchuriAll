@@ -46,8 +46,8 @@
 
         <div class="collapse navbar-collapse" id="navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="signin.php" title="">로그인</a></li>
-            <li><a href="signup.php" title="">회원가입</a></li>
+            <li><a href="signin/signin.php" title="">로그인</a></li>
+            <li><a href="signup/signup.php" title="">회원가입</a></li>
           </ul>
         </div> 
       </div>
